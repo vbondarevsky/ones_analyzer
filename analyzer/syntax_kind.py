@@ -24,6 +24,11 @@ class SyntaxKind(Enum):
     HashToken = 1018  # #
     AmpersandToken = 1019  # &
 
+    # Compound punctuation
+    LessThanEqualsToken = 2000  # <=
+    GreaterThanEqualsToken = 2001  # >=
+    LessThanGreaterThanToken = 2002  # <>
+
     # Tokens
     NumericLiteralToken = 5002
     DateLiteralToken = 5003
