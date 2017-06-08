@@ -26,6 +26,14 @@ class TestLexerNumericLiteralToken(unittest.TestCase):
         self.assertEqual(SyntaxKind.NumericLiteralToken, tokens[0][0])
         self.assertEqual("3.14", tokens[0][1])
 
+    def test_number_dot_number_dot(self):
+        tokens = list(Lexer(Source("3.14.")).tokenize())
+        self.assertEqual(2, len(tokens))
+        self.assertEqual(SyntaxKind.NumericLiteralToken, tokens[0][0])
+        self.assertEqual("3.14", tokens[0][1])
+        self.assertEqual(SyntaxKind.BadToken, tokens[1][0])
+        self.assertEqual(".", tokens[1][1])
+
 
 if __name__ == '__main__':
     unittest.main()
