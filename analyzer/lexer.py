@@ -2,12 +2,14 @@ from analyzer.syntax_kind import SyntaxKind
 
 
 class Lexer(object):
-    @staticmethod
-    def tokenize(source):
+    def __init__(self, source):
+        self.source = source
+
+    def tokenize(self):
         c = None
         while True:
             if c is None:
-                c = source.read(1)
+                c = self.source.read(1)
 
             if c == '':
                 return
@@ -55,7 +57,7 @@ class Lexer(object):
             elif c.isdigit():
                 value = c
                 while True:
-                    c = source.read(1)
+                    c = self.source.read(1)
                     if c.isdigit():
                         value += c
                     elif c == '.' and '.' not in value:
@@ -64,5 +66,16 @@ class Lexer(object):
                         yield (SyntaxKind.NumericLiteralToken, value)
                         break
                 continue
-            c = source.read(1)
+            elif c == "'":
+                value = ""
+                while True:
+                    c = self.source.read(1)
+                    if c.isdigit():
+                        value += c
+                    elif c == "'":
+                        c = self.source.read(1)
+                        yield (SyntaxKind.DateLiteralToken, value)
+                        break
+                continue
+            c = self.source.read(1)
         return
