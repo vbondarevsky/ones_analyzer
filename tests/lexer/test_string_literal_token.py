@@ -12,6 +12,18 @@ class TestLexerStringLiteralToken(unittest.TestCase):
         self.assertEqual(SyntaxKind.StringLiteralToken, tokens[0][0])
         self.assertEqual("", tokens[0][1])
 
+    def test_string_with_quotation_mark(self):
+        tokens = list(Lexer(Source('"какая-то ""строка"""')).tokenize())
+        self.assertEqual(1, len(tokens))
+        self.assertEqual(SyntaxKind.StringLiteralToken, tokens[0][0])
+        self.assertEqual('какая-то "строка"', tokens[0][1])
+
+    def test_multiline_string(self):
+        tokens = list(Lexer(Source('"многострочная\n|строка"')).tokenize())
+        self.assertEqual(1, len(tokens))
+        self.assertEqual(SyntaxKind.StringLiteralToken, tokens[0][0])
+        self.assertEqual('многострочная\n|строка', tokens[0][1])
+
 
 if __name__ == '__main__':
     unittest.main()
