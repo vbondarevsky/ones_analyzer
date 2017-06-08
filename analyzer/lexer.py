@@ -78,15 +78,7 @@ class Lexer(object):
                 self.token = (SyntaxKind.AmpersandToken,)
                 self.next_character()
             elif self.character == "'":
-                value = ""
-                while True:
-                    self.next_character()
-                    if self.character.isdigit():
-                        value += self.character
-                    elif self.character == "'":
-                        self.token = (SyntaxKind.DateLiteralToken, value)
-                        break
-                self.next_character()
+                self.read_date()
             else:
                 raise Exception(f"Unexpected symbol: {self.character}")
 
@@ -108,5 +100,18 @@ class Lexer(object):
                 characters.append(self.character)
             else:
                 break
-
         self.token = (SyntaxKind.NumericLiteralToken, ''.join(characters))
+
+    def read_date(self):
+        characters = []
+        while True:
+            self.next_character()
+            if self.character.isdigit():
+                characters.append(self.character)
+            elif self.character == "'":
+                self.token = (SyntaxKind.DateLiteralToken, ''.join(characters))
+                break
+            else:
+                self.token = (SyntaxKind.BadToken,)
+                break
+        self.next_character()
