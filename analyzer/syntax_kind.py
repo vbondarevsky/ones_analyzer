@@ -27,8 +27,14 @@ class SyntaxKind(Enum):
     # Other
     EndOfFileToken = 4000
 
+    # Compound punctuation
+    LessThanEqualsToken = 2000  # <=
+    GreaterThanEqualsToken = 2001  # >=
+    LessThanGreaterThanToken = 2002  # <>
+
     # Tokens
     BadToken = 5000
 
     NumericLiteralToken = 5002
     DateLiteralToken = 5003
+    StringLiteralToken = 5004
