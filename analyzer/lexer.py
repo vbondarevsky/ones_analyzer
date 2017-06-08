@@ -4,78 +4,109 @@ from analyzer.syntax_kind import SyntaxKind
 class Lexer(object):
     def __init__(self, source):
         self.source = source
+        self.character = None
+        self.token = None
 
     def tokenize(self):
-        c = None
         while True:
-            if c is None:
-                c = self.source.read(1)
+            if self.character is None:
+                self.next_character()
 
-            if c == '':
-                return
-
-            if c == '~':
-                yield (SyntaxKind.TildeToken,)
-            elif c == '%':
-                yield (SyntaxKind.PercentToken,)
-            elif c == '*':
-                yield (SyntaxKind.AsteriskToken,)
-            elif c == '(':
-                yield (SyntaxKind.OpenParenToken,)
-            elif c == ')':
-                yield (SyntaxKind.CloseParenToken,)
-            elif c == '-':
-                yield (SyntaxKind.MinusToken,)
-            elif c == '+':
-                yield (SyntaxKind.PlusToken,)
-            elif c == '=':
-                yield (SyntaxKind.EqualsToken,)
-            elif c == '[':
-                yield (SyntaxKind.OpenBracketToken,)
-            elif c == ']':
-                yield (SyntaxKind.CloseBracketToken,)
-            elif c == ':':
-                yield (SyntaxKind.ColonToken,)
-            elif c == ';':
-                yield (SyntaxKind.SemicolonToken,)
-            elif c == '<':
-                yield (SyntaxKind.LessThanToken,)
-            elif c == ',':
-                yield (SyntaxKind.CommaToken,)
-            elif c == '>':
-                yield (SyntaxKind.GreaterThanToken,)
-            elif c == '.':
-                yield (SyntaxKind.DotToken,)
-            elif c == '?':
-                yield (SyntaxKind.QuestionToken,)
-            elif c == '/':
-                yield (SyntaxKind.SlashToken,)
-            elif c == '#':
-                yield (SyntaxKind.HashToken,)
-            elif c == '&':
-                yield (SyntaxKind.AmpersandToken,)
-            elif c.isdigit():
-                value = c
-                while True:
-                    c = self.source.read(1)
-                    if c.isdigit():
-                        value += c
-                    elif c == '.' and '.' not in value:
-                        value += c
-                    else:
-                        yield (SyntaxKind.NumericLiteralToken, value)
-                        break
-                continue
-            elif c == "'":
+            if len(self.character) == 0:
+                self.token = (SyntaxKind.EndOfFileToken,)
+                break
+            elif self.character.isdigit():
+                self.read_number()
+            elif self.character == '~':
+                self.token = (SyntaxKind.TildeToken,)
+                self.next_character()
+            elif self.character == '%':
+                self.token = (SyntaxKind.PercentToken,)
+                self.next_character()
+            elif self.character == '*':
+                self.token = (SyntaxKind.AsteriskToken,)
+                self.next_character()
+            elif self.character == '(':
+                self.token = (SyntaxKind.OpenParenToken,)
+                self.next_character()
+            elif self.character == ')':
+                self.token = (SyntaxKind.CloseParenToken,)
+                self.next_character()
+            elif self.character == '-':
+                self.token = (SyntaxKind.MinusToken,)
+                self.next_character()
+            elif self.character == '+':
+                self.token = (SyntaxKind.PlusToken,)
+                self.next_character()
+            elif self.character == '=':
+                self.token = (SyntaxKind.EqualsToken,)
+                self.next_character()
+            elif self.character == '[':
+                self.token = (SyntaxKind.OpenBracketToken,)
+                self.next_character()
+            elif self.character == ']':
+                self.token = (SyntaxKind.CloseBracketToken,)
+                self.next_character()
+            elif self.character == ':':
+                self.token = (SyntaxKind.ColonToken,)
+                self.next_character()
+            elif self.character == ';':
+                self.token = (SyntaxKind.SemicolonToken,)
+                self.next_character()
+            elif self.character == '<':
+                self.token = (SyntaxKind.LessThanToken,)
+                self.next_character()
+            elif self.character == ',':
+                self.token = (SyntaxKind.CommaToken,)
+                self.next_character()
+            elif self.character == '>':
+                self.token = (SyntaxKind.GreaterThanToken,)
+                self.next_character()
+            elif self.character == '.':
+                self.token = (SyntaxKind.DotToken,)
+                self.next_character()
+            elif self.character == '?':
+                self.token = (SyntaxKind.QuestionToken,)
+                self.next_character()
+            elif self.character == '/':
+                self.token = (SyntaxKind.SlashToken,)
+                self.next_character()
+            elif self.character == '#':
+                self.token = (SyntaxKind.HashToken,)
+                self.next_character()
+            elif self.character == '&':
+                self.token = (SyntaxKind.AmpersandToken,)
+                self.next_character()
+            elif self.character == "'":
                 value = ""
                 while True:
-                    c = self.source.read(1)
-                    if c.isdigit():
-                        value += c
-                    elif c == "'":
-                        c = self.source.read(1)
-                        yield (SyntaxKind.DateLiteralToken, value)
+                    self.next_character()
+                    if self.character.isdigit():
+                        value += self.character
+                    elif self.character == "'":
+                        self.token = (SyntaxKind.DateLiteralToken, value)
                         break
-                continue
-            c = self.source.read(1)
+                self.next_character()
+            else:
+                raise Exception(f"Unexpected symbol: {self.character}")
+
+            yield self.token
+
         return
+
+    def next_character(self):
+        self.character = self.source.read(1)
+
+    def read_number(self):
+        characters = [self.character]
+        dot = 0
+        while True:
+            self.next_character()
+            if self.character.isdigit() or self.character == '.' and not dot:
+                if self.character == '.':
+                    dot += 1
+                characters.append(self.character)
+            else:
+                break
+
+        self.token = (SyntaxKind.NumericLiteralToken, ''.join(characters))
