@@ -26,3 +26,4 @@ class SyntaxKind(Enum):
 
     # Tokens
     NumericLiteralToken = 5002
+    DateLiteralToken = 5003

@@ -66,5 +66,16 @@ class Lexer(object):
                         yield (SyntaxKind.NumericLiteralToken, value)
                         break
                 continue
+            elif c == "'":
+                value = ""
+                while True:
+                    c = self.source.read(1)
+                    if c.isdigit():
+                        value += c
+                    elif c == "'":
+                        c = self.source.read(1)
+                        yield (SyntaxKind.DateLiteralToken, value)
+                        break
+                continue
             c = self.source.read(1)
         return
