@@ -24,6 +24,11 @@ class SyntaxKind(Enum):
     HashToken = 1018  # #
     AmpersandToken = 1019  # &
 
+    # Other
+    EndOfFileToken = 4000
+
     # Tokens
+    BadToken = 5000
+
     NumericLiteralToken = 5002
     DateLiteralToken = 5003
