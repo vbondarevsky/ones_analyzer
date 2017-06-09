@@ -63,7 +63,11 @@ class Lexer(object):
                 self.token = (SyntaxKind.QuestionToken,)
                 self.next_character()
             elif self.character == '/':
-                self.token = (SyntaxKind.SlashToken,)
+                self.next_character()
+                if self.character == '/':
+                    self.read_comment()
+                else:
+                    self.token = (SyntaxKind.SlashToken,)
             elif self.character == '#':
                 self.token = (SyntaxKind.HashToken,)
                 self.next_character()
@@ -161,3 +165,15 @@ class Lexer(object):
             else:
                 break
         self.token = (SyntaxKind.IdentifierToken, ''.join(characters))
+
+    def read_comment(self):
+        characters = []
+        self.next_character()
+        while True:
+            if self.character == '\n' or not len(self.character):
+                self.next_character()
+                break
+            else:
+                characters.append(self.character)
+                self.next_character()
+        self.token = (SyntaxKind.SingleLineCommentTrivia, ''.join(characters))

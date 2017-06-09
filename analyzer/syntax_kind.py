@@ -38,3 +38,6 @@ class SyntaxKind(Enum):
     NumericLiteralToken = 5002
     DateLiteralToken = 5003
     StringLiteralToken = 5004
+
+    # Trivia
+    SingleLineCommentTrivia = 7002
