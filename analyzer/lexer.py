@@ -16,6 +16,9 @@ class Lexer(object):
             if len(self.character) == 0:
                 self.token = (SyntaxKind.EndOfFileToken,)
                 break
+            elif self.character.isspace():
+                self.read_whitespace()
+                continue
             elif self.character.isdigit():
                 self.read_number()
             elif self.character == '~':
@@ -177,3 +180,11 @@ class Lexer(object):
                 characters.append(self.character)
                 self.next_character()
         self.token = (SyntaxKind.SingleLineCommentTrivia, ''.join(characters))
+
+    def read_whitespace(self):
+        self.next_character()
+        while True:
+            if not self.character.isspace() or not len(self.character):
+                break
+            else:
+                self.next_character()
