@@ -6,6 +6,7 @@ class Lexer(object):
         self.source = source
         self.character = None
         self.token = None
+        self.position = 0
 
     def tokenize(self):
         while True:
@@ -63,7 +64,6 @@ class Lexer(object):
                 self.next_character()
             elif self.character == '/':
                 self.token = (SyntaxKind.SlashToken,)
-                self.next_character()
             elif self.character == '#':
                 self.token = (SyntaxKind.HashToken,)
                 self.next_character()
@@ -74,8 +74,10 @@ class Lexer(object):
                 self.read_date()
             elif self.character == '"':
                 self.read_string()
+            elif self.character.isalpha() or self.character == '_':
+                self.read_identifier()
             else:
-                raise Exception(f"Unexpected symbol: {self.character}")
+                raise Exception(f"Unexpected symbol: {self.character}, position: {self.position}")
 
             yield self.token
 
@@ -83,6 +85,7 @@ class Lexer(object):
 
     def next_character(self):
         self.character = self.source.read(1)
+        self.position += 1
 
     def read_number(self):
         characters = [self.character]
@@ -147,3 +150,14 @@ class Lexer(object):
             else:
                 characters.append(self.character)
                 self.next_character()
+
+    def read_identifier(self):
+        characters = [self.character]
+        self.next_character()
+        while True:
+            if self.character.isalnum() or self.character == '_':
+                characters.append(self.character)
+                self.next_character()
+            else:
+                break
+        self.token = (SyntaxKind.IdentifierToken, ''.join(characters))

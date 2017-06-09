@@ -34,7 +34,7 @@ class SyntaxKind(Enum):
 
     # Tokens
     BadToken = 5000
-
+    IdentifierToken = 5001
     NumericLiteralToken = 5002
     DateLiteralToken = 5003
     StringLiteralToken = 5004
