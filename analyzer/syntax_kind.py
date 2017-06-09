@@ -10,14 +10,11 @@ class SyntaxKind(Enum):
     CloseParenToken = 1004  # )
     MinusToken = 1005  # -
     PlusToken = 1006  # +
-    EqualsToken = 1007  # =
     OpenBracketToken = 1008  # [
     CloseBracketToken = 1009  # ]
     ColonToken = 1010  # :
     SemicolonToken = 1011  # ;
-    LessThanToken = 1012  # <
     CommaToken = 1013  # ,
-    GreaterThanToken = 1014  # >
     DotToken = 1015  # .
     QuestionToken = 1016  # ?
     SlashToken = 1017  # /
@@ -27,7 +24,10 @@ class SyntaxKind(Enum):
     # Other
     EndOfFileToken = 4000
 
-    # Compound punctuation
+    # Comparison operator
+    EqualsToken = 1007  # =
+    LessThanToken = 1012  # <
+    GreaterThanToken = 1014  # >
     LessThanEqualsToken = 2000  # <=
     GreaterThanEqualsToken = 2001  # >=
     LessThanGreaterThanToken = 2002  # <>

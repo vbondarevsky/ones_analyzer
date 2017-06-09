@@ -46,11 +46,6 @@ class TestLexerPunctuationTokens(unittest.TestCase):
         self.assertEqual(1, len(tokens))
         self.assertEqual(SyntaxKind.PlusToken, tokens[0][0])
 
-    def test_equals_token(self):
-        tokens = list(Lexer(Source("=")).tokenize())
-        self.assertEqual(1, len(tokens))
-        self.assertEqual(SyntaxKind.EqualsToken, tokens[0][0])
-
     def test_open_bracket_token(self):
         tokens = list(Lexer(Source("[")).tokenize())
         self.assertEqual(1, len(tokens))
@@ -71,20 +66,10 @@ class TestLexerPunctuationTokens(unittest.TestCase):
         self.assertEqual(1, len(tokens))
         self.assertEqual(SyntaxKind.SemicolonToken, tokens[0][0])
 
-    def test_less_than_token(self):
-        tokens = list(Lexer(Source("<")).tokenize())
-        self.assertEqual(1, len(tokens))
-        self.assertEqual(SyntaxKind.LessThanToken, tokens[0][0])
-
     def test_comma_token(self):
         tokens = list(Lexer(Source(",")).tokenize())
         self.assertEqual(1, len(tokens))
         self.assertEqual(SyntaxKind.CommaToken, tokens[0][0])
-
-    def test_greater_than_token(self):
-        tokens = list(Lexer(Source(">")).tokenize())
-        self.assertEqual(1, len(tokens))
-        self.assertEqual(SyntaxKind.GreaterThanToken, tokens[0][0])
 
     def test_dot_token(self):
         tokens = list(Lexer(Source(".")).tokenize())

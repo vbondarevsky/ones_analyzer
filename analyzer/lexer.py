@@ -38,9 +38,8 @@ class Lexer(object):
             elif self.character == '+':
                 self.token = (SyntaxKind.PlusToken,)
                 self.next_character()
-            elif self.character == '=':
-                self.token = (SyntaxKind.EqualsToken,)
-                self.next_character()
+            elif self.character in '=<>':
+                self.read_comparison_operator()
             elif self.character == '[':
                 self.token = (SyntaxKind.OpenBracketToken,)
                 self.next_character()
@@ -53,14 +52,8 @@ class Lexer(object):
             elif self.character == ';':
                 self.token = (SyntaxKind.SemicolonToken,)
                 self.next_character()
-            elif self.character == '<':
-                self.token = (SyntaxKind.LessThanToken,)
-                self.next_character()
             elif self.character == ',':
                 self.token = (SyntaxKind.CommaToken,)
-                self.next_character()
-            elif self.character == '>':
-                self.token = (SyntaxKind.GreaterThanToken,)
                 self.next_character()
             elif self.character == '.':
                 self.token = (SyntaxKind.DotToken,)
@@ -115,3 +108,23 @@ class Lexer(object):
                 self.token = (SyntaxKind.BadToken,)
                 break
         self.next_character()
+
+    def read_comparison_operator(self):
+        first_character = self.character
+        self.next_character()
+
+        if (first_character + self.character) == '<>':
+            self.token = (SyntaxKind.LessThanGreaterThanToken,)
+            self.next_character()
+        elif (first_character + self.character) == '<=':
+            self.token = (SyntaxKind.LessThanEqualsToken,)
+            self.next_character()
+        elif (first_character + self.character) == '>=':
+            self.token = (SyntaxKind.GreaterThanEqualsToken,)
+            self.next_character()
+        elif first_character == '<':
+            self.token = (SyntaxKind.LessThanToken,)
+        elif first_character == '>':
+            self.token = (SyntaxKind.GreaterThanToken,)
+        elif first_character == '=':
+            self.token = (SyntaxKind.EqualsToken,)
