@@ -72,6 +72,8 @@ class Lexer(object):
                 self.next_character()
             elif self.character == "'":
                 self.read_date()
+            elif self.character == '"':
+                self.read_string()
             else:
                 raise Exception(f"Unexpected symbol: {self.character}")
 
@@ -128,3 +130,20 @@ class Lexer(object):
             self.token = (SyntaxKind.GreaterThanToken,)
         elif first_character == '=':
             self.token = (SyntaxKind.EqualsToken,)
+
+    def read_string(self):
+        self.next_character()
+        characters = []
+        while True:
+            if self.character == '"':
+                self.next_character()
+                if self.character == '"':
+                    characters.append(self.character)
+                    self.next_character()
+                else:
+                    self.token = (SyntaxKind.StringLiteralToken, ''.join(characters))
+                    # self.next_character()
+                    break
+            else:
+                characters.append(self.character)
+                self.next_character()
