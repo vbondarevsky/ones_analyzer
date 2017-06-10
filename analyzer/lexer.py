@@ -21,62 +21,17 @@ class Lexer(object):
                 continue
             elif self.character.isdigit():
                 self.read_number()
-            elif self.character == '~':
-                self.token = (SyntaxKind.TildeToken,)
-                self.next_character()
-            elif self.character == '%':
-                self.token = (SyntaxKind.PercentToken,)
-                self.next_character()
-            elif self.character == '*':
-                self.token = (SyntaxKind.AsteriskToken,)
-                self.next_character()
-            elif self.character == '(':
-                self.token = (SyntaxKind.OpenParenToken,)
-                self.next_character()
-            elif self.character == ')':
-                self.token = (SyntaxKind.CloseParenToken,)
-                self.next_character()
-            elif self.character == '-':
-                self.token = (SyntaxKind.MinusToken,)
-                self.next_character()
-            elif self.character == '+':
-                self.token = (SyntaxKind.PlusToken,)
-                self.next_character()
+            elif self.is_punctuation():
+                self.read_punctuation()
             elif self.character in '=<>':
                 self.read_comparison_operator()
-            elif self.character == '[':
-                self.token = (SyntaxKind.OpenBracketToken,)
-                self.next_character()
-            elif self.character == ']':
-                self.token = (SyntaxKind.CloseBracketToken,)
-                self.next_character()
-            elif self.character == ':':
-                self.token = (SyntaxKind.ColonToken,)
-                self.next_character()
-            elif self.character == ';':
-                self.token = (SyntaxKind.SemicolonToken,)
-                self.next_character()
-            elif self.character == ',':
-                self.token = (SyntaxKind.CommaToken,)
-                self.next_character()
-            elif self.character == '.':
-                self.token = (SyntaxKind.DotToken,)
-                self.next_character()
-            elif self.character == '?':
-                self.token = (SyntaxKind.QuestionToken,)
-                self.next_character()
             elif self.character == '/':
                 self.next_character()
                 if self.character == '/':
                     self.read_comment()
                 else:
                     self.token = (SyntaxKind.SlashToken,)
-            elif self.character == '#':
-                self.token = (SyntaxKind.HashToken,)
-                self.next_character()
-            elif self.character == '&':
-                self.token = (SyntaxKind.AmpersandToken,)
-                self.next_character()
+
             elif self.character == "'":
                 self.read_date()
             elif self.character == '"':
@@ -188,3 +143,26 @@ class Lexer(object):
                 break
             else:
                 self.next_character()
+
+    def is_punctuation(self):
+        return self.character in "~%*()-+[]:;,.?#&"
+
+    def read_punctuation(self):
+        punctuation = {'~': SyntaxKind.TildeToken,
+                       '%': SyntaxKind.PercentToken,
+                       '*': SyntaxKind.AsteriskToken,
+                       '(': SyntaxKind.OpenParenToken,
+                       ')': SyntaxKind.CloseParenToken,
+                       '[': SyntaxKind.OpenBracketToken,
+                       ']': SyntaxKind.CloseBracketToken,
+                       '-': SyntaxKind.MinusToken,
+                       '+': SyntaxKind.PlusToken,
+                       ':': SyntaxKind.ColonToken,
+                       ';': SyntaxKind.SemicolonToken,
+                       ',': SyntaxKind.CommaToken,
+                       '.': SyntaxKind.DotToken,
+                       '?': SyntaxKind.QuestionToken,
+                       '#': SyntaxKind.HashToken,
+                       '&': SyntaxKind.AmpersandToken}
+        self.token = (punctuation.get(self.character),)
+        self.next_character()
