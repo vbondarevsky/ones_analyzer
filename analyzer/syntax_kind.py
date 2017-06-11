@@ -69,6 +69,8 @@ class SyntaxKind(Enum):
     FalseKeyword = 3032
     UndefinedKeyword = 3033
 
+    ExportKeyword = 3034
+
     # Tokens
     BadToken = 5000
     IdentifierToken = 5001

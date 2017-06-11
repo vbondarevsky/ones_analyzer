@@ -47,7 +47,8 @@ class TestLexerKeyword(unittest.TestCase):
         self.run_test(["Null"], SyntaxKind.NullKeyword)
         self.run_test(["Истина", "True"], SyntaxKind.TrueKeyword)
         self.run_test(["Ложь", "False"], SyntaxKind.FalseKeyword)
-        self.run_test(["Неопределено", "Undefined"], SyntaxKind.UndefinedKeyword)
+
+        self.run_test(["Экспорт", "Export"], SyntaxKind.ExportKeyword)
 
     def run_test(self, keywords, syntax_kind):
         code_list = []
