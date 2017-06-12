@@ -7,8 +7,8 @@ from analyzer.syntax_kind import SyntaxKind
 
 class TestLexerExpression(unittest.TestCase):
     def test_number_plus_number_equals_number_expression(self):
-        tokens = list(Lexer(Source("2 + 3 = 5;")).tokenize())
-        self.assertEqual(6, len(tokens))
+        tokens = list(Lexer(Source("2+3=5;")).tokenize())
+        self.assertEqual(7, len(tokens))
 
         self.assertEqual(SyntaxKind.NumericLiteralToken, tokens[0][0])
         self.assertEqual("2", tokens[0][1])
@@ -24,6 +24,7 @@ class TestLexerExpression(unittest.TestCase):
         self.assertEqual("5", tokens[4][1])
 
         self.assertEqual(SyntaxKind.SemicolonToken, tokens[5][0])
+        self.assertEqual(SyntaxKind.EndOfFileToken, tokens[6][0])
 
 
 if __name__ == '__main__':

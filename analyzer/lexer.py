@@ -99,10 +99,8 @@ class Lexer(object):
 
             if len(self.character) == 0:
                 self.token = (SyntaxKind.EndOfFileToken,)
-                break
             elif self.character.isspace():
                 self.read_whitespace()
-                continue
             elif self.character.isdigit():
                 self.read_number()
             elif self.is_punctuation():
@@ -115,7 +113,6 @@ class Lexer(object):
                     self.read_comment()
                 else:
                     self.token = (SyntaxKind.SlashToken,)
-
             elif self.character == "'":
                 self.read_date()
             elif self.character == '"':
@@ -126,6 +123,9 @@ class Lexer(object):
                 raise Exception(f"Unexpected symbol: {self.character}, position: {self.position}")
 
             yield self.token
+
+            if self.token[0] == SyntaxKind.EndOfFileToken:
+                break
 
         return
 
@@ -215,7 +215,6 @@ class Lexer(object):
         self.next_character()
         while True:
             if self.character == '\n' or not len(self.character):
-                self.next_character()
                 break
             else:
                 characters.append(self.character)
@@ -223,9 +222,15 @@ class Lexer(object):
         self.token = (SyntaxKind.SingleLineCommentTrivia, ''.join(characters))
 
     def read_whitespace(self):
+        if self.character == '\n':
+            self.token = (SyntaxKind.EndOfLineTrivia,)
+            self.next_character()
+            return
+
         self.next_character()
         while True:
-            if not self.character.isspace() or not len(self.character):
+            if not self.character.isspace() or self.character == '\n':
+                self.token = (SyntaxKind.WhitespaceTrivia,)
                 break
             else:
                 self.next_character()

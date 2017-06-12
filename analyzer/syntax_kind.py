@@ -79,4 +79,6 @@ class SyntaxKind(Enum):
     StringLiteralToken = 5004
 
     # Trivia
+    EndOfLineTrivia = 7000
+    WhitespaceTrivia = 7001
     SingleLineCommentTrivia = 7002
