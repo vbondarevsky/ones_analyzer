@@ -14,6 +14,14 @@ class TestParserExpression(unittest.TestCase):
         self.assertEqual(node.kind, SyntaxKind.NumericLiteralExpression)
         self.assertEqual(node.token.text, "2")
 
+    def test_unary_minus_literal_expression(self):
+        lexer = Lexer(Source("-2")).tokenize()
+        parser = Parser(lexer)
+        node = parser.parse()
+        self.assertEqual(node.kind, SyntaxKind.UnaryMinusExpression)
+        self.assertEqual(node.operand.kind, SyntaxKind.NumericLiteralExpression)
+        self.assertEqual(node.operator_token.kind, SyntaxKind.MinusToken)
+
 
 if __name__ == '__main__':
     unittest.main()
