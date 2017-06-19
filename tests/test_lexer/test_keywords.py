@@ -58,10 +58,10 @@ class TestLexerKeyword(unittest.TestCase):
         for code in code_list:
             with self.subTest(code):
                 tokens = list(Lexer(Source(code)).tokenize())
-                self.assertEqual(2, len(tokens))
-                self.assertEqual(syntax_kind, tokens[0][0])
-                self.assertEqual(code, tokens[0][1])
-                self.assertEqual(SyntaxKind.EndOfFileToken, tokens[1][0])
+                self.assertEqual(len(tokens), 2)
+                self.assertEqual(tokens[0].kind, syntax_kind)
+                self.assertEqual(tokens[0].text, code)
+                self.assertEqual(tokens[1].kind, SyntaxKind.EndOfFileToken)
 
 
 if __name__ == '__main__':

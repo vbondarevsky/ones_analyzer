@@ -82,3 +82,16 @@ class SyntaxKind(Enum):
     EndOfLineTrivia = 7000
     WhitespaceTrivia = 7001
     SingleLineCommentTrivia = 7002
+
+    # syntax
+    SubtractExpression = 9000
+    AddExpression = 9001
+    DivideExpression = 9002
+    MultiplyExpression = 9003
+
+    NumericLiteralExpression = 9004
+
+    UnaryPlusExpression = 9005
+    UnaryMinusExpression = 9006
+
+    ParenthesizedExpression = 9007

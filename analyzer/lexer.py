@@ -1,4 +1,5 @@
 from analyzer.syntax_kind import SyntaxKind
+from analyzer.token import SyntaxToken
 
 
 class Lexer(object):
@@ -98,7 +99,7 @@ class Lexer(object):
                 self.next_character()
 
             if len(self.character) == 0:
-                self.token = (SyntaxKind.EndOfFileToken,)
+                self.token = SyntaxToken(SyntaxKind.EndOfFileToken, "")
             elif self.character.isspace():
                 self.read_whitespace()
             elif self.character.isdigit():
@@ -112,7 +113,7 @@ class Lexer(object):
                 if self.character == '/':
                     self.read_comment()
                 else:
-                    self.token = (SyntaxKind.SlashToken,)
+                    self.token = SyntaxToken(SyntaxKind.SlashToken, "/")
             elif self.character == "'":
                 self.read_date()
             elif self.character == '"':
@@ -124,7 +125,7 @@ class Lexer(object):
 
             yield self.token
 
-            if self.token[0] == SyntaxKind.EndOfFileToken:
+            if self.token.kind == SyntaxKind.EndOfFileToken:
                 break
 
         return
@@ -144,7 +145,7 @@ class Lexer(object):
                 characters.append(self.character)
             else:
                 break
-        self.token = (SyntaxKind.NumericLiteralToken, ''.join(characters))
+        self.token = SyntaxToken(SyntaxKind.NumericLiteralToken, ''.join(characters))
 
     def read_date(self):
         characters = []
@@ -153,10 +154,10 @@ class Lexer(object):
             if self.character.isdigit():
                 characters.append(self.character)
             elif self.character == "'":
-                self.token = (SyntaxKind.DateLiteralToken, ''.join(characters))
+                self.token = SyntaxToken(SyntaxKind.DateLiteralToken, ''.join(characters))
                 break
             else:
-                self.token = (SyntaxKind.BadToken,)
+                self.token = SyntaxToken(SyntaxKind.BadToken, None)
                 break
         self.next_character()
 
@@ -165,20 +166,20 @@ class Lexer(object):
         self.next_character()
 
         if (first_character + self.character) == '<>':
-            self.token = (SyntaxKind.LessThanGreaterThanToken,)
+            self.token = SyntaxToken(SyntaxKind.LessThanGreaterThanToken, "<>")
             self.next_character()
         elif (first_character + self.character) == '<=':
-            self.token = (SyntaxKind.LessThanEqualsToken,)
+            self.token = SyntaxToken(SyntaxKind.LessThanEqualsToken, "<=")
             self.next_character()
         elif (first_character + self.character) == '>=':
-            self.token = (SyntaxKind.GreaterThanEqualsToken,)
+            self.token = SyntaxToken(SyntaxKind.GreaterThanEqualsToken, ">=")
             self.next_character()
         elif first_character == '<':
-            self.token = (SyntaxKind.LessThanToken,)
+            self.token = SyntaxToken(SyntaxKind.LessThanToken, "<")
         elif first_character == '>':
-            self.token = (SyntaxKind.GreaterThanToken,)
+            self.token = SyntaxToken(SyntaxKind.GreaterThanToken, ">")
         elif first_character == '=':
-            self.token = (SyntaxKind.EqualsToken,)
+            self.token = SyntaxToken(SyntaxKind.EqualsToken, "=")
 
     def read_string(self):
         self.next_character()
@@ -190,7 +191,7 @@ class Lexer(object):
                     characters.append(self.character)
                     self.next_character()
                 else:
-                    self.token = (SyntaxKind.StringLiteralToken, ''.join(characters))
+                    self.token = SyntaxToken(SyntaxKind.StringLiteralToken, ''.join(characters))
                     # self.next_character()
                     break
             else:
@@ -206,9 +207,9 @@ class Lexer(object):
                 self.next_character()
             else:
                 break
-        lexeme = ''.join(characters)
+        text = ''.join(characters)
 
-        self.token = (self.keywords.get(lexeme.lower(), SyntaxKind.IdentifierToken), lexeme)
+        self.token = SyntaxToken(self.keywords.get(text.lower(), SyntaxKind.IdentifierToken), text)
 
     def read_comment(self):
         characters = []
@@ -219,18 +220,18 @@ class Lexer(object):
             else:
                 characters.append(self.character)
                 self.next_character()
-        self.token = (SyntaxKind.SingleLineCommentTrivia, ''.join(characters))
+        self.token = SyntaxToken(SyntaxKind.SingleLineCommentTrivia, ''.join(characters))
 
     def read_whitespace(self):
         if self.character == '\n':
-            self.token = (SyntaxKind.EndOfLineTrivia,)
+            self.token = SyntaxToken(SyntaxKind.EndOfLineTrivia, "\n")
             self.next_character()
             return
 
         self.next_character()
         while True:
             if not self.character.isspace() or self.character == '\n':
-                self.token = (SyntaxKind.WhitespaceTrivia,)
+                self.token = SyntaxToken(SyntaxKind.WhitespaceTrivia, " ")
                 break
             else:
                 self.next_character()
@@ -239,5 +240,5 @@ class Lexer(object):
         return self.character in "~%*()-+[]:;,.?#&"
 
     def read_punctuation(self):
-        self.token = (self.punctuation.get(self.character),)
+        self.token = SyntaxToken(self.punctuation.get(self.character), self.character)
         self.next_character()
