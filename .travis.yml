@@ -2,9 +2,8 @@ language: python
 python:
   - "3.6"
 before_install:
-  - "pip install coverage"
-  - "pip install coveralls"
+  - pip install codecov
 script:
-  - "coverage run -m unittest"
+  - coverage run -m unittest
 after_success:
-    coveralls
+    codecov
