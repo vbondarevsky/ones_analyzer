@@ -1,8 +1,7 @@
 import unittest
-from io import StringIO as Source
 
-from analyzer.lexer import Lexer
 from analyzer.syntax_kind import SyntaxKind
+from tests.utils import tokenize_source
 
 
 class TestLexerKeyword(unittest.TestCase):
@@ -57,7 +56,7 @@ class TestLexerKeyword(unittest.TestCase):
         code_list.extend(map(str.lower, keywords))
         for code in code_list:
             with self.subTest(code):
-                tokens = list(Lexer(Source(code)).tokenize())
+                tokens = tokenize_source(code)
                 self.assertEqual(len(tokens), 2)
                 self.assertEqual(tokens[0].kind, syntax_kind)
                 self.assertEqual(tokens[0].text, code)

@@ -1,20 +1,19 @@
 import unittest
-from io import StringIO as Source
 
-from analyzer.lexer import Lexer
 from analyzer.syntax_kind import SyntaxKind
+from tests.utils import tokenize_source
 
 
 class TestLexerSingleLineCommentTrivia(unittest.TestCase):
     def test_single_line_comment(self):
-        tokens = list(Lexer(Source(r"// какой-то комментарий")).tokenize())
+        tokens = tokenize_source(r"// какой-то комментарий")
         self.assertEqual(len(tokens), 2)
         self.assertEqual(tokens[0].kind, SyntaxKind.SingleLineCommentTrivia)
         self.assertEqual(tokens[0].text, " какой-то комментарий")
         self.assertEqual(tokens[1].kind, SyntaxKind.EndOfFileToken)
 
     def test_multi_line_comment(self):
-        tokens = list(Lexer(Source("// первая строка комментария\n// вторая строка")).tokenize())
+        tokens = tokenize_source("// первая строка комментария\n// вторая строка")
         self.assertEqual(len(tokens), 4)
         self.assertEqual(tokens[0].kind, SyntaxKind.SingleLineCommentTrivia)
         self.assertEqual(tokens[0].text, " первая строка комментария")

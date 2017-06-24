@@ -1,13 +1,12 @@
 import unittest
-from io import StringIO as Source
 
-from analyzer.lexer import Lexer
 from analyzer.syntax_kind import SyntaxKind
+from tests.utils import tokenize_source
 
 
 class TestLexerExpression(unittest.TestCase):
     def test_number_plus_number_equals_number_expression(self):
-        tokens = list(Lexer(Source("2+3=5;")).tokenize())
+        tokens = tokenize_source("2+3=5;")
         self.assertEqual(len(tokens), 7)
 
         self.assertEqual(tokens[0].kind, SyntaxKind.NumericLiteralToken)
