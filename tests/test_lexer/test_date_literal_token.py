@@ -23,7 +23,3 @@ class TestLexerDateLiteralToken(unittest.TestCase):
     def test_not_date(self):
         tokens = list(Lexer(Source('''"ДФ=dd.MM.yyyy; ДП='Нет даты'"''')).tokenize())
         self.assertNotEqual(tokens[0].kind, SyntaxKind.DateLiteralToken)
-
-
-if __name__ == '__main__':
-    unittest.main()

@@ -18,7 +18,3 @@ class TestLexerWhiteSpace(unittest.TestCase):
         self.assertEqual(tokens[1].kind, SyntaxKind.EndOfLineTrivia)
         self.assertEqual(tokens[2].kind, SyntaxKind.WhitespaceTrivia)
         self.assertEqual(tokens[3].kind, SyntaxKind.EndOfFileToken)
-
-
-if __name__ == '__main__':
-    unittest.main()

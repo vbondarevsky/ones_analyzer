@@ -22,7 +22,3 @@ class TestLexerSingleLineCommentTrivia(unittest.TestCase):
         self.assertEqual(tokens[2].kind, SyntaxKind.SingleLineCommentTrivia)
         self.assertEqual(tokens[2].text, " вторая строка")
         self.assertEqual(tokens[3].kind, SyntaxKind.EndOfFileToken)
-
-
-if __name__ == '__main__':
-    unittest.main()

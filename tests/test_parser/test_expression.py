@@ -21,7 +21,3 @@ class TestParserExpression(unittest.TestCase):
         self.assertEqual(node.kind, SyntaxKind.UnaryMinusExpression)
         self.assertEqual(node.operand.kind, SyntaxKind.NumericLiteralExpression)
         self.assertEqual(node.operator_token.kind, SyntaxKind.MinusToken)
-
-
-if __name__ == '__main__':
-    unittest.main()

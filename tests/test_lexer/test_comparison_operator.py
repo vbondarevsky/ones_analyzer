@@ -41,7 +41,3 @@ class TestLexerComparisonOperatorToken(unittest.TestCase):
         self.assertEqual(len(tokens), 2)
         self.assertEqual(tokens[0].kind, SyntaxKind.LessThanGreaterThanToken)
         self.assertEqual(tokens[1].kind, SyntaxKind.EndOfFileToken)
-
-
-if __name__ == '__main__':
-    unittest.main()

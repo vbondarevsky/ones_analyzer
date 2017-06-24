@@ -33,7 +33,3 @@ class TestLexerStringLiteralToken(unittest.TestCase):
         self.assertEqual(tokens[0].kind, SyntaxKind.StringLiteralToken)
         self.assertEqual(tokens[0].text, 'многострочная\n|строка')
         self.assertEqual(tokens[1].kind, SyntaxKind.EndOfFileToken)
-
-
-if __name__ == '__main__':
-    unittest.main()

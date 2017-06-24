@@ -52,7 +52,3 @@ class TestLexerNumericLiteralToken(unittest.TestCase):
         self.assertEqual(tokens[1].kind, SyntaxKind.NumericLiteralToken)
         self.assertEqual(tokens[1].text, "4")
         self.assertEqual(tokens[2].kind, SyntaxKind.EndOfFileToken)
-
-
-if __name__ == '__main__':
-    unittest.main()

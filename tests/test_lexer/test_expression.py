@@ -25,7 +25,3 @@ class TestLexerExpression(unittest.TestCase):
 
         self.assertEqual(tokens[5].kind, SyntaxKind.SemicolonToken)
         self.assertEqual(tokens[6].kind, SyntaxKind.EndOfFileToken)
-
-
-if __name__ == '__main__':
-    unittest.main()
