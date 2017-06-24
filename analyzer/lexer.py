@@ -2,6 +2,11 @@ from analyzer.syntax_kind import SyntaxKind
 from analyzer.token import SyntaxToken
 
 
+class UnexpectedSymbolError(Exception):
+    def __init__(self, msg):
+        super(UnexpectedSymbolError, self).__init__(msg)
+
+
 class Lexer(object):
     def __init__(self, source):
         self.source = source
@@ -121,7 +126,7 @@ class Lexer(object):
             elif self.character.isalpha() or self.character == '_':
                 self.read_identifier()
             else:
-                raise Exception(f"Unexpected symbol: {self.character}, position: {self.position}")
+                raise UnexpectedSymbolError(f"Unexpected symbol: {self.character}, position: {self.position}")
 
             yield self.token
 
