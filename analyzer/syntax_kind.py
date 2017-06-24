@@ -95,3 +95,6 @@ class SyntaxKind(Enum):
     UnaryMinusExpression = 9006
 
     ParenthesizedExpression = 9007
+
+    VariableDeclaration = 9008
+    Module = 9009
