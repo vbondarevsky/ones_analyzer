@@ -5,6 +5,10 @@ from analyzer.expression.prefix_unary_expression_syntax import PrefixUnaryExpres
 from analyzer.syntax_kind import SyntaxKind
 
 
+class InvalidSyntaxError(Exception):
+    pass
+
+
 class Parser(object):
     def __init__(self, lexer):
         self.lexer = lexer
@@ -17,10 +21,7 @@ class Parser(object):
         if self.token.kind == kind:
             self.next_token()
         else:
-            raise Exception('syntax error')
-
-    def error(self):
-        raise Exception('Invalid syntax')
+            raise InvalidSyntaxError('syntax error')
 
     def factor(self):
         token = self.token
@@ -77,6 +78,6 @@ class Parser(object):
     def parse(self):
         node = self.expr()
         if self.token.kind != SyntaxKind.EndOfFileToken:
-            self.error()
+            raise InvalidSyntaxError('syntax error')
 
         return node

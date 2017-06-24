@@ -3,17 +3,15 @@ from analyzer.token import SyntaxToken
 
 
 class UnexpectedSymbolError(Exception):
-    def __init__(self, msg):
-        super(UnexpectedSymbolError, self).__init__(msg)
+    pass
 
 
 class Lexer(object):
     def __init__(self, source):
         self.source = source
-        self.character = None
+        self.character = ''
         self.token = None
         self.position = 0
-
         self.punctuation = {'~': SyntaxKind.TildeToken,
                             '%': SyntaxKind.PercentToken,
                             '*': SyntaxKind.AsteriskToken,
@@ -97,12 +95,10 @@ class Lexer(object):
                          'false': SyntaxKind.FalseKeyword,
                          'экспорт': SyntaxKind.ExportKeyword,
                          'export': SyntaxKind.ExportKeyword}
+        self.next_character()
 
     def tokenize(self):
         while True:
-            if self.character is None:
-                self.next_character()
-
             if len(self.character) == 0:
                 self.token = SyntaxToken(SyntaxKind.EndOfFileToken, "")
             elif self.character.isspace():
@@ -197,7 +193,6 @@ class Lexer(object):
                     self.next_character()
                 else:
                     self.token = SyntaxToken(SyntaxKind.StringLiteralToken, ''.join(characters))
-                    # self.next_character()
                     break
             else:
                 characters.append(self.character)
