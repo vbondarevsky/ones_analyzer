@@ -1,6 +1,9 @@
 from analyzer.expression.binary_expression_syntax import BinaryExpressionSyntax
 from analyzer.expression.literal_expression_syntax import LiteralExpressionSyntax
+from analyzer.expression.method_syntax import MethodSyntax
 from analyzer.expression.module_syntax import ModuleSyntax
+from analyzer.expression.parameter_list_syntax import ParameterListSyntax
+from analyzer.expression.parameter_syntax import ParameterSyntax
 from analyzer.expression.parenthesized_expression_syntax import ParenthesizedExpressionSyntax
 from analyzer.expression.prefix_unary_expression_syntax import PrefixUnaryExpressionSyntax
 from analyzer.expression.variable_declaration_syntax import VariableDeclarationSyntax
@@ -87,7 +90,8 @@ class Parser(object):
 
     def module(self):
         declarations = self.declarations()
-        methods = []
+        self.skip_whitespace()
+        methods = self.methods()
         body = None
         end_of_file_token = None
         return ModuleSyntax(declarations, methods, body, end_of_file_token)
@@ -121,3 +125,59 @@ class Parser(object):
             self.match(SyntaxKind.SemicolonToken)
         self.skip_whitespace()
         return VariableDeclarationSyntax(var_token, variables, export_token, semicolon_token)
+
+    def methods(self):
+        methods = []
+        while self.token.kind in [SyntaxKind.FunctionKeyword, SyntaxKind.ProcedureKeyword]:
+            methods.append(self.method())
+            self.skip_whitespace()
+        return methods
+
+    def method(self):
+        begin = self.token
+        self.next_token()
+        self.skip_whitespace()
+        identifier = self.token
+        self.match(SyntaxKind.IdentifierToken)
+        self.skip_whitespace()
+        parameter_list = self.parameter_list()
+        self.skip_whitespace()
+        if self.token.kind == SyntaxKind.ExportKeyword:
+            export = self.token
+            self.skip_whitespace()
+        else:
+            export = None
+        block = self.block()
+        self.skip_whitespace()
+        end = self.token
+        self.next_token()
+
+        return MethodSyntax(begin, identifier, parameter_list, export, block, end)
+
+    def parameter_list(self):
+        open_paren = self.token
+        self.match(SyntaxKind.OpenParenToken)
+        self.skip_whitespace()
+        parameters = []
+        while self.token.kind == SyntaxKind.IdentifierToken:
+            parameters.append(self.parameter())
+            self.skip_whitespace()
+            if self.token.kind == SyntaxKind.CommaToken:
+                parameters.append(self.token)
+                self.match(SyntaxKind.CommaToken)
+                self.skip_whitespace()
+        close_paren = None
+        if self.token.kind == SyntaxKind.CloseParenToken:
+            close_paren = self.token
+            self.match(SyntaxKind.CloseParenToken)
+        return ParameterListSyntax(open_paren, parameters, close_paren)
+
+    def parameter(self):
+        identifier = self.token
+        self.match(SyntaxKind.IdentifierToken)
+        default = None
+        return ParameterSyntax(identifier, default)
+
+    def block(self):
+        self.skip_whitespace()
+        return None
