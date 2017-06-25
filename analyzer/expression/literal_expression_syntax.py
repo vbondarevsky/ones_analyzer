@@ -14,7 +14,7 @@ class LiteralExpressionSyntax(object):
         elif token.kind == SyntaxKind.UndefinedKeyword:
             self.kind = SyntaxKind.UndefinedLiteralExpression
         else:
-            raise Exception("")
+            raise Exception("")  # TODO: Сделать осмысленное исключение
         self.token = token
 
     def __str__(self):

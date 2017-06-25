@@ -110,3 +110,5 @@ class SyntaxKind(Enum):
     Parameter = 9013
 
     EqualsValueClause = 9014
+
+    Empty = 10000
