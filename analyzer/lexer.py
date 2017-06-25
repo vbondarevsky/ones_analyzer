@@ -93,6 +93,8 @@ class Lexer(object):
                          'true': SyntaxKind.TrueKeyword,
                          'ложь': SyntaxKind.FalseKeyword,
                          'false': SyntaxKind.FalseKeyword,
+                         'неопределено': SyntaxKind.UndefinedKeyword,
+                         'undefined': SyntaxKind.UndefinedKeyword,
                          'экспорт': SyntaxKind.ExportKeyword,
                          'export': SyntaxKind.ExportKeyword}
         self.next_character()

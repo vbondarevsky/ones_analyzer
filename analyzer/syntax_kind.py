@@ -90,6 +90,10 @@ class SyntaxKind(Enum):
     MultiplyExpression = 9003
 
     NumericLiteralExpression = 9004
+    StringLiteralExpression = 9015
+    DateLiteralExpression = 9016
+    UndefinedLiteralExpression = 9017
+    NullLiteralExpression = 9018
 
     UnaryPlusExpression = 9005
     UnaryMinusExpression = 9006
@@ -104,3 +108,5 @@ class SyntaxKind(Enum):
 
     ParameterList = 9012
     Parameter = 9013
+
+    EqualsValueClause = 9014

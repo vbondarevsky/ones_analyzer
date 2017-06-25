@@ -1,4 +1,5 @@
 from analyzer.expression.binary_expression_syntax import BinaryExpressionSyntax
+from analyzer.expression.equals_value_clause_syntax import EqualsValueClauseSyntax
 from analyzer.expression.literal_expression_syntax import LiteralExpressionSyntax
 from analyzer.expression.method_syntax import MethodSyntax
 from analyzer.expression.module_syntax import ModuleSyntax
@@ -175,8 +176,19 @@ class Parser(object):
     def parameter(self):
         identifier = self.token
         self.match(SyntaxKind.IdentifierToken)
-        default = None
+        self.skip_whitespace()
+        default = self.default()
         return ParameterSyntax(identifier, default)
+
+    def default(self):
+        if self.token.kind == SyntaxKind.EqualsToken:
+            equals_token = self.token
+            self.match(SyntaxKind.EqualsToken)
+            self.skip_whitespace()
+            value = LiteralExpressionSyntax(self.token)
+            self.next_token()
+            return EqualsValueClauseSyntax(equals_token, value)
+        return None
 
     def block(self):
         self.skip_whitespace()
