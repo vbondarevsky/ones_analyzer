@@ -1,4 +1,6 @@
 from analyzer.expression.binary_expression_syntax import BinaryExpressionSyntax
+from analyzer.expression.block_syntax import BlockSyntax
+from analyzer.expression.body_syntax import BodySyntax
 from analyzer.expression.empty_syntax import EmptySyntax
 from analyzer.expression.equals_value_clause_syntax import EqualsValueClauseSyntax
 from analyzer.expression.literal_expression_syntax import LiteralExpressionSyntax
@@ -8,6 +10,7 @@ from analyzer.expression.parameter_list_syntax import ParameterListSyntax
 from analyzer.expression.parameter_syntax import ParameterSyntax
 from analyzer.expression.parenthesized_expression_syntax import ParenthesizedExpressionSyntax
 from analyzer.expression.prefix_unary_expression_syntax import PrefixUnaryExpressionSyntax
+from analyzer.expression.return_statement_syntax import ReturnStatementSyntax
 from analyzer.expression.variable_declaration_syntax import VariableDeclarationSyntax
 from analyzer.syntax_kind import SyntaxKind
 
@@ -30,59 +33,6 @@ class Parser(object):
         else:
             raise InvalidSyntaxError('syntax error')
 
-    def factor(self):
-        token = self.token
-        if token.kind == SyntaxKind.PlusToken:
-            self.eat(SyntaxKind.PlusToken)
-            return PrefixUnaryExpressionSyntax(SyntaxKind.UnaryPlusExpression, token, self.factor())
-        elif token.kind == SyntaxKind.MinusToken:
-            self.eat(SyntaxKind.MinusToken)
-            return PrefixUnaryExpressionSyntax(SyntaxKind.UnaryMinusExpression, token, self.factor())
-        elif token.kind == SyntaxKind.NumericLiteralToken:
-            self.eat(SyntaxKind.NumericLiteralToken)
-            return LiteralExpressionSyntax(SyntaxKind.NumericLiteralExpression, token)
-        elif token.kind == SyntaxKind.OpenParenToken:
-            self.eat(SyntaxKind.OpenParenToken)
-            node = self.expr()
-            close_token = self.token
-            self.eat(SyntaxKind.CloseParenToken)
-            return ParenthesizedExpressionSyntax(token, node, close_token)
-
-    def term(self):
-        node = self.factor()
-
-        while self.token.kind in [SyntaxKind.AsteriskToken, SyntaxKind.SlashToken]:
-            token = self.token
-            if token.kind == SyntaxKind.SlashToken:
-                self.eat(SyntaxKind.SlashToken)
-            elif token.kind == SyntaxKind.AsteriskToken:
-                self.eat(SyntaxKind.AsteriskToken)
-
-            if token.kind == SyntaxKind.SlashToken:
-                node = BinaryExpressionSyntax(SyntaxKind.DivideExpression, node, token, self.term())
-            elif token.kind == SyntaxKind.AsteriskToken:
-                node = BinaryExpressionSyntax(SyntaxKind.MultiplyExpression, node, token, self.term())
-        return node
-
-    def expr(self):
-
-        node = self.term()
-
-        while self.token.kind in [SyntaxKind.PlusToken, SyntaxKind.MinusToken]:
-            token = self.token
-            if token.kind == SyntaxKind.PlusToken:
-                self.eat(SyntaxKind.PlusToken)
-            elif token.kind == SyntaxKind.MinusToken:
-                self.eat(SyntaxKind.MinusToken)
-
-            if token.kind == SyntaxKind.PlusToken:
-                node = BinaryExpressionSyntax(SyntaxKind.AddExpression, node, token, self.term())
-            elif token.kind == SyntaxKind.MinusToken:
-                node = BinaryExpressionSyntax(SyntaxKind.SubtractExpression, node, token, self.term())
-
-        return node
-
-    ########################################################################
     def skip_whitespace(self):
         while self.token.kind in [SyntaxKind.WhitespaceTrivia, SyntaxKind.EndOfLineTrivia]:
             self.next_token()
@@ -94,8 +44,9 @@ class Parser(object):
         declarations = self.declarations()
         self.skip_whitespace()
         methods = self.methods()
-        body = None
-        end_of_file_token = None
+        body = self.body()
+        self.skip_whitespace()
+        end_of_file_token = self.token
         return ModuleSyntax(declarations, methods, body, end_of_file_token)
 
     def declarations(self):
@@ -107,8 +58,8 @@ class Parser(object):
     def variable_declaration(self):
         var_token = self.token
         variables = []
-        export_token = None
-        semicolon_token = None
+        export_token = EmptySyntax()
+        semicolon_token = EmptySyntax()
         self.eat(SyntaxKind.VarKeyword)
         self.skip_whitespace()
         while self.token.kind == SyntaxKind.IdentifierToken:
@@ -148,7 +99,7 @@ class Parser(object):
             export = self.token
             self.skip_whitespace()
         else:
-            export = None
+            export = EmptySyntax()
         block = self.block()
         self.skip_whitespace()
         end = self.token
@@ -168,7 +119,7 @@ class Parser(object):
                 parameters.append(self.token)
                 self.eat(SyntaxKind.CommaToken)
                 self.skip_whitespace()
-        close_paren = None
+        close_paren = EmptySyntax()
         if self.token.kind == SyntaxKind.CloseParenToken:
             close_paren = self.token
             self.eat(SyntaxKind.CloseParenToken)
@@ -193,4 +144,89 @@ class Parser(object):
 
     def block(self):
         self.skip_whitespace()
-        return EmptySyntax()
+        declarations = self.declarations()
+        statements = self.statements()
+        return BlockSyntax(declarations, statements)
+
+    def body(self):
+        statements = self.statements()
+        return BodySyntax(statements)
+
+    def statements(self):
+        statements = []
+        statement = self.statement()
+        if statement.kind != SyntaxKind.Empty:
+            statements.append(statement)
+        return statements
+
+    def statement(self):
+        if self.token.kind == SyntaxKind.ReturnKeyword:
+            return self.return_statement()
+        return self.factor()
+
+    def return_statement(self):
+        return_keyword = self.token
+        self.eat(SyntaxKind.ReturnKeyword)
+        self.skip_whitespace()
+        expression = self.factor()
+        self.skip_whitespace()
+        semicolon_token = EmptySyntax()
+        if self.token.kind == SyntaxKind.SemicolonToken:
+            semicolon_token = self.token
+            self.eat(SyntaxKind.SemicolonToken)
+        self.skip_whitespace()
+        return ReturnStatementSyntax(return_keyword, expression, semicolon_token)
+
+    def factor(self):
+        token = self.token
+        if token.kind == SyntaxKind.PlusToken:
+            self.eat(SyntaxKind.PlusToken)
+            return PrefixUnaryExpressionSyntax(SyntaxKind.UnaryPlusExpression, token, self.factor())
+        elif token.kind == SyntaxKind.MinusToken:
+            self.eat(SyntaxKind.MinusToken)
+            return PrefixUnaryExpressionSyntax(SyntaxKind.UnaryMinusExpression, token, self.factor())
+        elif token.kind == SyntaxKind.NumericLiteralToken:
+            self.eat(SyntaxKind.NumericLiteralToken)
+            return LiteralExpressionSyntax(token)
+        elif token.kind == SyntaxKind.OpenParenToken:
+            self.eat(SyntaxKind.OpenParenToken)
+            node = self.expression()
+            close_token = self.token
+            self.eat(SyntaxKind.CloseParenToken)
+            return ParenthesizedExpressionSyntax(token, node, close_token)
+        else:
+            return EmptySyntax()
+
+    def term(self):
+        node = self.factor()
+
+        while self.token.kind in [SyntaxKind.AsteriskToken, SyntaxKind.SlashToken]:
+            token = self.token
+            if token.kind == SyntaxKind.SlashToken:
+                self.eat(SyntaxKind.SlashToken)
+            elif token.kind == SyntaxKind.AsteriskToken:
+                self.eat(SyntaxKind.AsteriskToken)
+
+            if token.kind == SyntaxKind.SlashToken:
+                node = BinaryExpressionSyntax(SyntaxKind.DivideExpression, node, token, self.term())
+            elif token.kind == SyntaxKind.AsteriskToken:
+                node = BinaryExpressionSyntax(SyntaxKind.MultiplyExpression, node, token, self.term())
+        return node
+
+    def expression(self):
+
+        node = self.term()
+
+        while self.token.kind in [SyntaxKind.PlusToken, SyntaxKind.MinusToken]:
+            token = self.token
+            if token.kind == SyntaxKind.PlusToken:
+                self.eat(SyntaxKind.PlusToken)
+            elif token.kind == SyntaxKind.MinusToken:
+                self.eat(SyntaxKind.MinusToken)
+
+            if token.kind == SyntaxKind.PlusToken:
+                node = BinaryExpressionSyntax(SyntaxKind.AddExpression, node, token, self.term())
+            elif token.kind == SyntaxKind.MinusToken:
+                node = BinaryExpressionSyntax(SyntaxKind.SubtractExpression, node, token, self.term())
+
+        return node

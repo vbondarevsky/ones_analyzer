@@ -111,4 +111,8 @@ class SyntaxKind(Enum):
 
     EqualsValueClause = 9014
 
+    Block = 9100
+    Body = 9200
     Empty = 10000
+
+    ReturnStatement = 11000

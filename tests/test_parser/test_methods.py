@@ -71,3 +71,27 @@ class TestParserMethods(unittest.TestCase):
         self.assertEqual(syntax_tree.methods[0].parameter_list.parameters[8].default.kind, SyntaxKind.EqualsValueClause)
         self.assertEqual(syntax_tree.methods[0].parameter_list.parameters[8].default.value.token.kind,
                          SyntaxKind.UndefinedKeyword)
+
+    def test_one_method_and_block_with_declarations(self):
+        code = \
+            """Процедура МояПроцедура()
+                Перем ЛокальнаяПеременная1, ЛокальнаяПеременная2;
+            КонецПроцедуры"""
+        syntax_tree = parse_source(code)
+        self.assertEqual(syntax_tree.kind, SyntaxKind.Module)
+        self.assertEqual(len(syntax_tree.declarations), 0)
+        self.assertEqual(len(syntax_tree.methods), 1)
+        self.assertEqual(len(syntax_tree.methods[0].block.declarations), 1)
+        self.assertEqual(len(syntax_tree.methods[0].block.statements), 0)
+
+    def test_one_method_and_with_return(self):
+        code = \
+            """Процедура МояПроцедура()
+                Возврат;
+            КонецПроцедуры"""
+        syntax_tree = parse_source(code)
+        self.assertEqual(syntax_tree.kind, SyntaxKind.Module)
+        self.assertEqual(len(syntax_tree.declarations), 0)
+        self.assertEqual(len(syntax_tree.methods), 1)
+        self.assertEqual(len(syntax_tree.methods[0].block.declarations), 0)
+        self.assertEqual(len(syntax_tree.methods[0].block.statements), 1)
