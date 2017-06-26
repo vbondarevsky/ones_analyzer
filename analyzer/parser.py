@@ -1,8 +1,10 @@
+from analyzer.expression.assignment_expression_syntax import AssignmentExpressionSyntax
 from analyzer.expression.binary_expression_syntax import BinaryExpressionSyntax
 from analyzer.expression.block_syntax import BlockSyntax
 from analyzer.expression.body_syntax import BodySyntax
 from analyzer.expression.empty_syntax import EmptySyntax
 from analyzer.expression.equals_value_clause_syntax import EqualsValueClauseSyntax
+from analyzer.expression.expression_statement_syntax import ExpressionStatementSyntax
 from analyzer.expression.literal_expression_syntax import LiteralExpressionSyntax
 from analyzer.expression.method_syntax import MethodSyntax
 from analyzer.expression.module_syntax import ModuleSyntax
@@ -154,6 +156,7 @@ class Parser(object):
 
     def statements(self):
         statements = []
+
         statement = self.statement()
         if statement.kind != SyntaxKind.Empty:
             statements.append(statement)
@@ -162,6 +165,14 @@ class Parser(object):
     def statement(self):
         if self.token.kind == SyntaxKind.ReturnKeyword:
             return self.return_statement()
+        elif self.token.kind == SyntaxKind.IdentifierToken:
+            expression = self.assignment_statement()
+            self.skip_whitespace()
+            semicolon_token = EmptySyntax()
+            if self.token.kind == SyntaxKind.SemicolonToken:
+                semicolon_token = self.token
+                self.eat(SyntaxKind.SemicolonToken)
+            return ExpressionStatementSyntax(expression, semicolon_token)
         return self.expression()
 
     def return_statement(self):
@@ -176,6 +187,17 @@ class Parser(object):
             self.eat(SyntaxKind.SemicolonToken)
         self.skip_whitespace()
         return ReturnStatementSyntax(return_keyword, expression, semicolon_token)
+
+    def assignment_statement(self):
+        left = self.token
+        self.eat(SyntaxKind.IdentifierToken)
+        self.skip_whitespace()
+        operator_token = self.token
+        self.eat(SyntaxKind.EqualsToken)
+        self.skip_whitespace()
+        right = self.expression()
+        self.skip_whitespace()
+        return AssignmentExpressionSyntax(left, operator_token, right)
 
     def factor(self):
         token = self.token
