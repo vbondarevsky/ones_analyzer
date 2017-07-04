@@ -1,5 +1,6 @@
 from analyzer.syntax_kind import SyntaxKind
-from analyzer.token import SyntaxToken
+from analyzer.syntax_token import SyntaxToken
+from analyzer.syntax_trivia import SyntaxTrivia
 
 
 class UnexpectedSymbolError(Exception):
@@ -222,18 +223,18 @@ class Lexer(object):
             else:
                 characters.append(self.character)
                 self.next_character()
-        self.token = SyntaxToken(SyntaxKind.SingleLineCommentTrivia, ''.join(characters))
+        self.token = SyntaxTrivia(SyntaxKind.SingleLineCommentTrivia, ''.join(characters))
 
     def read_whitespace(self):
         if self.character == '\n':
-            self.token = SyntaxToken(SyntaxKind.EndOfLineTrivia, "\n")
+            self.token = SyntaxTrivia(SyntaxKind.EndOfLineTrivia, "\n")
             self.next_character()
             return
 
         self.next_character()
         while True:
             if not self.character.isspace() or self.character == '\n':
-                self.token = SyntaxToken(SyntaxKind.WhitespaceTrivia, " ")
+                self.token = SyntaxTrivia(SyntaxKind.WhitespaceTrivia, " ")
                 break
             else:
                 self.next_character()
