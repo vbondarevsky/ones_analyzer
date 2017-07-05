@@ -100,7 +100,7 @@ class Lexer(object):
                          'export': SyntaxKind.ExportKeyword}
         self.next_character()
 
-    def tokenize(self):
+    def next_token(self):
         while True:
             if len(self.character) == 0:
                 self.token = SyntaxToken(SyntaxKind.EndOfFileToken, "")
@@ -134,6 +134,40 @@ class Lexer(object):
 
         return
 
+    def tokenize(self):
+        leading_trivia = []
+        trailing_trivia = []
+        syntax_token = None
+        for token in self.next_token():
+            if isinstance(token, SyntaxTrivia):
+                if syntax_token:
+                    if token.kind == SyntaxKind.EndOfLineTrivia:
+                        trailing_trivia.append(token)
+
+                        syntax_token.leading_trivia = leading_trivia
+                        syntax_token.trailing_trivia = trailing_trivia
+                        yield syntax_token
+                        syntax_token = None
+                        leading_trivia = []
+                        trailing_trivia = []
+                    else:
+                        trailing_trivia.append(token)
+                else:
+                    leading_trivia.append(token)
+            else:
+                if syntax_token:
+                    syntax_token.leading_trivia = leading_trivia
+                    syntax_token.trailing_trivia = trailing_trivia
+                    yield syntax_token
+                    syntax_token = token
+                    leading_trivia = []
+                    trailing_trivia = []
+                else:
+                    syntax_token = token
+
+        yield syntax_token
+        return
+
     def next_character(self):
         self.character = self.source.read(1)
         self.position += 1
@@ -152,12 +186,13 @@ class Lexer(object):
         self.token = SyntaxToken(SyntaxKind.NumericLiteralToken, ''.join(characters))
 
     def read_date(self):
-        characters = []
+        characters = [self.character]
         while True:
             self.next_character()
             if self.character.isdigit():
                 characters.append(self.character)
             elif self.character == "'":
+                characters.append(self.character)
                 self.token = SyntaxToken(SyntaxKind.DateLiteralToken, ''.join(characters))
                 break
             else:
@@ -186,10 +221,11 @@ class Lexer(object):
             self.token = SyntaxToken(SyntaxKind.EqualsToken, "=")
 
     def read_string(self):
+        characters = [self.character]
         self.next_character()
-        characters = []
         while True:
             if self.character == '"':
+                characters.append(self.character)
                 self.next_character()
                 if self.character == '"':
                     characters.append(self.character)
@@ -215,7 +251,7 @@ class Lexer(object):
         self.token = SyntaxToken(self.keywords.get(text.lower(), SyntaxKind.IdentifierToken), text)
 
     def read_comment(self):
-        characters = []
+        characters = [r'//']
         self.next_character()
         while True:
             if self.character == '\n' or not len(self.character):
@@ -231,12 +267,14 @@ class Lexer(object):
             self.next_character()
             return
 
+        characters = [self.character]
         self.next_character()
         while True:
             if not self.character.isspace() or self.character == '\n':
-                self.token = SyntaxTrivia(SyntaxKind.WhitespaceTrivia, " ")
+                self.token = SyntaxTrivia(SyntaxKind.WhitespaceTrivia, ''.join(characters))
                 break
             else:
+                characters.append(self.character)
                 self.next_character()
 
     def is_punctuation(self):
