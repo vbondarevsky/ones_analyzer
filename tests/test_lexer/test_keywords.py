@@ -1,10 +1,8 @@
-import unittest
-
 from analyzer.syntax_kind import SyntaxKind
-from tests.utils import tokenize_source
+from tests.utils import TestCaseLexer
 
 
-class TestLexerKeyword(unittest.TestCase):
+class TestLexerKeyword(TestCaseLexer):
     def test_keywords(self):
         self.run_test(["Если", "If"], SyntaxKind.IfKeyword)
         self.run_test(["Тогда", "Then"], SyntaxKind.ThenKeyword)
@@ -57,8 +55,6 @@ class TestLexerKeyword(unittest.TestCase):
         code_list.extend(map(str.lower, keywords))
         for code in code_list:
             with self.subTest(code):
-                tokens = tokenize_source(code)
-                self.assertEqual(len(tokens), 2)
-                self.assertEqual(tokens[0].kind, syntax_kind)
-                self.assertEqual(tokens[0].text, code)
-                self.assertEqual(tokens[1].kind, SyntaxKind.EndOfFileToken)
+                self.tokenize_source(code, 2)
+                self.check_token(0, syntax_kind, [], [])
+                self.check_token(1, SyntaxKind.EndOfFileToken, [], [])

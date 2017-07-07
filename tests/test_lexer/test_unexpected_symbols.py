@@ -1,10 +1,8 @@
-import unittest
-
 from analyzer.lexer import UnexpectedSymbolError
-from tests.utils import tokenize_source
+from tests.utils import TestCaseLexer
 
 
-class TestUnexpectedSymbols(unittest.TestCase):
+class TestUnexpectedSymbols(TestCaseLexer):
     def test_unexpected_symbols(self):
         with self.assertRaises(UnexpectedSymbolError):
-            tokenize_source("@")
+            self.tokenize_source("@", 2)
