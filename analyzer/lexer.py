@@ -164,8 +164,11 @@ class Lexer(object):
                     trailing_trivia = []
                 else:
                     syntax_token = token
+        else:
+            syntax_token.leading_trivia = leading_trivia
+            syntax_token.trailing_trivia = trailing_trivia
+            yield syntax_token
 
-        yield syntax_token
         return
 
     def next_character(self):
