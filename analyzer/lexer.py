@@ -7,7 +7,7 @@ class UnexpectedSymbolError(Exception):
     pass
 
 
-class Lexer(object):
+class Lexer:
     def __init__(self, source):
         self.source = source
         self.character = ''
