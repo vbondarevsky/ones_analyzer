@@ -1,108 +1,89 @@
-import unittest
-
 from analyzer.syntax_kind import SyntaxKind
-from tests.utils import tokenize_source
+from tests.utils import TestCaseLexer
 
 
-class TestLexerPunctuationTokens(unittest.TestCase):
+class TestLexerPunctuationTokens(TestCaseLexer):
     def test_tilde_token(self):
-        tokens = tokenize_source("~")
-        self.assertEqual(len(tokens), 2)
-        self.assertEqual(tokens[0].kind, SyntaxKind.TildeToken)
-        self.assertEqual(tokens[1].kind, SyntaxKind.EndOfFileToken)
+        self.tokenize_source("~", 2)
+        self.check_token(0, SyntaxKind.TildeToken, [], [])
+        self.check_token(1, SyntaxKind.EndOfFileToken, [], [])
 
     def test_percent_token(self):
-        tokens = tokenize_source("%")
-        self.assertEqual(len(tokens), 2)
-        self.assertEqual(tokens[0].kind, SyntaxKind.PercentToken)
-        self.assertEqual(tokens[1].kind, SyntaxKind.EndOfFileToken)
+        self.tokenize_source("%", 2)
+        self.check_token(0, SyntaxKind.PercentToken, [], [])
+        self.check_token(1, SyntaxKind.EndOfFileToken, [], [])
 
     def test_asterisk_token(self):
-        tokens = tokenize_source("*")
-        self.assertEqual(len(tokens), 2)
-        self.assertEqual(tokens[0].kind, SyntaxKind.AsteriskToken)
-        self.assertEqual(tokens[1].kind, SyntaxKind.EndOfFileToken)
+        self.tokenize_source("*", 2)
+        self.check_token(0, SyntaxKind.AsteriskToken, [], [])
+        self.check_token(1, SyntaxKind.EndOfFileToken, [], [])
 
     def test_open_paren_token(self):
-        tokens = tokenize_source("(")
-        self.assertEqual(len(tokens), 2)
-        self.assertEqual(tokens[0].kind, SyntaxKind.OpenParenToken)
-        self.assertEqual(tokens[1].kind, SyntaxKind.EndOfFileToken)
+        self.tokenize_source("(", 2)
+        self.check_token(0, SyntaxKind.OpenParenToken, [], [])
+        self.check_token(1, SyntaxKind.EndOfFileToken, [], [])
 
     def test_close_paren_token(self):
-        tokens = tokenize_source(")")
-        self.assertEqual(len(tokens), 2)
-        self.assertEqual(tokens[0].kind, SyntaxKind.CloseParenToken)
-        self.assertEqual(tokens[1].kind, SyntaxKind.EndOfFileToken)
+        self.tokenize_source(")", 2)
+        self.check_token(0, SyntaxKind.CloseParenToken, [], [])
+        self.check_token(1, SyntaxKind.EndOfFileToken, [], [])
 
     def test_minus_token(self):
-        tokens = tokenize_source("-")
-        self.assertEqual(len(tokens), 2)
-        self.assertEqual(tokens[0].kind, SyntaxKind.MinusToken)
-        self.assertEqual(tokens[1].kind, SyntaxKind.EndOfFileToken)
+        self.tokenize_source("-", 2)
+        self.check_token(0, SyntaxKind.MinusToken, [], [])
+        self.check_token(1, SyntaxKind.EndOfFileToken, [], [])
 
     def test_plus_token(self):
-        tokens = tokenize_source("+")
-        self.assertEqual(len(tokens), 2)
-        self.assertEqual(tokens[0].kind, SyntaxKind.PlusToken)
-        self.assertEqual(tokens[1].kind, SyntaxKind.EndOfFileToken)
+        self.tokenize_source("+", 2)
+        self.check_token(0, SyntaxKind.PlusToken, [], [])
+        self.check_token(1, SyntaxKind.EndOfFileToken, [], [])
 
     def test_open_bracket_token(self):
-        tokens = tokenize_source("[")
-        self.assertEqual(len(tokens), 2)
-        self.assertEqual(tokens[0].kind, SyntaxKind.OpenBracketToken)
-        self.assertEqual(tokens[1].kind, SyntaxKind.EndOfFileToken)
+        self.tokenize_source("[", 2)
+        self.check_token(0, SyntaxKind.OpenBracketToken, [], [])
+        self.check_token(1, SyntaxKind.EndOfFileToken, [], [])
 
     def test_close_bracket_token(self):
-        tokens = tokenize_source("]")
-        self.assertEqual(len(tokens), 2)
-        self.assertEqual(tokens[0].kind, SyntaxKind.CloseBracketToken)
-        self.assertEqual(tokens[1].kind, SyntaxKind.EndOfFileToken)
+        self.tokenize_source("]", 2)
+        self.check_token(0, SyntaxKind.CloseBracketToken, [], [])
+        self.check_token(1, SyntaxKind.EndOfFileToken, [], [])
 
     def test_colon_token(self):
-        tokens = tokenize_source(":")
-        self.assertEqual(len(tokens), 2)
-        self.assertEqual(tokens[0].kind, SyntaxKind.ColonToken)
-        self.assertEqual(tokens[1].kind, SyntaxKind.EndOfFileToken)
+        self.tokenize_source(":", 2)
+        self.check_token(0, SyntaxKind.ColonToken, [], [])
+        self.check_token(1, SyntaxKind.EndOfFileToken, [], [])
 
     def test_semicolon_token(self):
-        tokens = tokenize_source(";")
-        self.assertEqual(len(tokens), 2)
-        self.assertEqual(tokens[0].kind, SyntaxKind.SemicolonToken)
-        self.assertEqual(tokens[1].kind, SyntaxKind.EndOfFileToken)
+        self.tokenize_source(";", 2)
+        self.check_token(0, SyntaxKind.SemicolonToken, [], [])
+        self.check_token(1, SyntaxKind.EndOfFileToken, [], [])
 
     def test_comma_token(self):
-        tokens = tokenize_source(",")
-        self.assertEqual(len(tokens), 2)
-        self.assertEqual(tokens[0].kind, SyntaxKind.CommaToken)
-        self.assertEqual(tokens[1].kind, SyntaxKind.EndOfFileToken)
+        self.tokenize_source(",", 2)
+        self.check_token(0, SyntaxKind.CommaToken, [], [])
+        self.check_token(1, SyntaxKind.EndOfFileToken, [], [])
 
     def test_dot_token(self):
-        tokens = tokenize_source(".")
-        self.assertEqual(len(tokens), 2)
-        self.assertEqual(tokens[0].kind, SyntaxKind.DotToken)
-        self.assertEqual(tokens[1].kind, SyntaxKind.EndOfFileToken)
+        self.tokenize_source(".", 2)
+        self.check_token(0, SyntaxKind.DotToken, [], [])
+        self.check_token(1, SyntaxKind.EndOfFileToken, [], [])
 
     def test_question_token(self):
-        tokens = tokenize_source("?")
-        self.assertEqual(len(tokens), 2)
-        self.assertEqual(tokens[0].kind, SyntaxKind.QuestionToken)
-        self.assertEqual(tokens[1].kind, SyntaxKind.EndOfFileToken)
+        self.tokenize_source("?", 2)
+        self.check_token(0, SyntaxKind.QuestionToken, [], [])
+        self.check_token(1, SyntaxKind.EndOfFileToken, [], [])
 
     def test_slash_token(self):
-        tokens = tokenize_source("/")
-        self.assertEqual(len(tokens), 2)
-        self.assertEqual(tokens[0].kind, SyntaxKind.SlashToken)
-        self.assertEqual(tokens[1].kind, SyntaxKind.EndOfFileToken)
+        self.tokenize_source("/", 2)
+        self.check_token(0, SyntaxKind.SlashToken, [], [])
+        self.check_token(1, SyntaxKind.EndOfFileToken, [], [])
 
     def test_hash_token(self):
-        tokens = tokenize_source("#")
-        self.assertEqual(len(tokens), 2)
-        self.assertEqual(tokens[0].kind, SyntaxKind.HashToken)
-        self.assertEqual(tokens[1].kind, SyntaxKind.EndOfFileToken)
+        self.tokenize_source("#", 2)
+        self.check_token(0, SyntaxKind.HashToken, [], [])
+        self.check_token(1, SyntaxKind.EndOfFileToken, [], [])
 
     def test_ampersand_token(self):
-        tokens = tokenize_source("&")
-        self.assertEqual(len(tokens), 2)
-        self.assertEqual(tokens[0].kind, SyntaxKind.AmpersandToken)
-        self.assertEqual(tokens[1].kind, SyntaxKind.EndOfFileToken)
+        self.tokenize_source("&", 2)
+        self.check_token(0, SyntaxKind.AmpersandToken, [], [])
+        self.check_token(1, SyntaxKind.EndOfFileToken, [], [])

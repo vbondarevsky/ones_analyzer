@@ -21,7 +21,7 @@ class InvalidSyntaxError(Exception):
     pass
 
 
-class Parser(object):
+class Parser:
     def __init__(self, lexer):
         self.lexer = lexer
         self.token = next(self.lexer)

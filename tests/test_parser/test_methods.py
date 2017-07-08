@@ -61,11 +61,11 @@ class TestParserMethods(unittest.TestCase):
 
         self.assertEqual(syntax_tree.methods[0].parameter_list.parameters[4].kind, SyntaxKind.Parameter)
         self.assertEqual(syntax_tree.methods[0].parameter_list.parameters[4].default.kind, SyntaxKind.EqualsValueClause)
-        self.assertEqual(syntax_tree.methods[0].parameter_list.parameters[4].default.value.token.text, "Строка")
+        self.assertEqual(syntax_tree.methods[0].parameter_list.parameters[4].default.value.token.text, '"Строка"')
 
         self.assertEqual(syntax_tree.methods[0].parameter_list.parameters[6].kind, SyntaxKind.Parameter)
         self.assertEqual(syntax_tree.methods[0].parameter_list.parameters[6].default.kind, SyntaxKind.EqualsValueClause)
-        self.assertEqual(syntax_tree.methods[0].parameter_list.parameters[6].default.value.token.text, "20170605")
+        self.assertEqual(syntax_tree.methods[0].parameter_list.parameters[6].default.value.token.text, "'20170605'")
 
         self.assertEqual(syntax_tree.methods[0].parameter_list.parameters[8].kind, SyntaxKind.Parameter)
         self.assertEqual(syntax_tree.methods[0].parameter_list.parameters[8].default.kind, SyntaxKind.EqualsValueClause)
