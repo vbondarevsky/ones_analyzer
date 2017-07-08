@@ -56,5 +56,5 @@ class TestLexerKeyword(TestCaseLexer):
         for code in code_list:
             with self.subTest(code):
                 self.tokenize_source(code, 2)
-                self.check_token(0, syntax_kind, [], [])
-                self.check_token(1, SyntaxKind.EndOfFileToken, [], [])
+                self.assertToken(0, syntax_kind, [], [])
+                self.assertToken(1, SyntaxKind.EndOfFileToken, [], [])

@@ -16,7 +16,7 @@ class TestCaseLexer(TestCase):
         self.assertEqual(length, len(self.tokens))
         self.assertEqual(code, ''.join(map(str, self.tokens)))
 
-    def check_token(self, index, kind, leading_trivia, trailing_trivia):
+    def assertToken(self, index, kind, leading_trivia, trailing_trivia):
         token = self.tokens[index]
         self.assertEqual(kind, token.kind)
         self.assertEqual(len(leading_trivia), len(token.leading_trivia))
