@@ -5,8 +5,18 @@ from analyzer.lexer import Lexer
 from analyzer.parser import Parser
 
 
-def parse_source(code):
-    return Parser(Lexer(Source(code)).tokenize()).parse()
+class TestCaseParser(TestCase):
+    def parse_source(self, code):
+        self.syntax_tree = Parser(Lexer(Source(code)).tokenize()).parse()
+        self.assertEqual(code, str(self.syntax_tree))
+
+    def assertNode(self, node, kind_node):
+        if isinstance(node, list):
+            self.assertEqual(len(kind_node), len(node))
+            for i in range(len(kind_node)):
+                self.assertEqual(kind_node[i], node[i].kind)
+        else:
+            self.assertEqual(kind_node, node.kind)
 
 
 class TestCaseLexer(TestCase):

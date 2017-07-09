@@ -105,8 +105,16 @@ class SyntaxKind(Enum):
     VariableDeclaration = 9008
     Module = 9009
 
-    Function = 9010
-    Procedure = 9011
+    FunctionBlock = 111111
+    ProcedureBlock = 11112
+
+    FunctionStatement = 1
+    ProcedureStatement = 2
+
+    EndFunctionStatement = 3
+    EndProcedureStatement = 4
+
+
 
     ParameterList = 9012
     Parameter = 9013
