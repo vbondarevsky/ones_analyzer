@@ -94,6 +94,8 @@ class SyntaxKind(Enum):
     DateLiteralExpression = 9016
     UndefinedLiteralExpression = 9017
     NullLiteralExpression = 9018
+    TrueLiteralExpression = 9019
+    FalseLiteralExpression = 9020
 
     UnaryPlusExpression = 9005
     UnaryMinusExpression = 9006

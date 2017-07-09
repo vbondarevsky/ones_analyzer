@@ -92,7 +92,7 @@ class Parser:
         identifier = self.eat(SyntaxKind.IdentifierToken)
         parameter_list = self.parameter_list()
         if self.token.kind == SyntaxKind.ExportKeyword:
-            export = self.token
+            export = self.eat(SyntaxKind.ExportKeyword)
         else:
             export = EmptySyntax()
         return MethodStatementSyntax(declaration_keyword, identifier, parameter_list, export)
