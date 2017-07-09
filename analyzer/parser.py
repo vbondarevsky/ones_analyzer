@@ -117,7 +117,9 @@ class Parser:
         if self.token.kind == SyntaxKind.EqualsToken:
             equals_token = self.eat(SyntaxKind.EqualsToken)
             value = LiteralExpressionSyntax(self.token)
-            self.next_token()
+            self.eat([SyntaxKind.NumericLiteralToken, SyntaxKind.StringLiteralToken,
+                      SyntaxKind.DateLiteralToken, SyntaxKind.UndefinedKeyword,
+                      SyntaxKind.NullKeyword, SyntaxKind.TrueKeyword, SyntaxKind.FalseKeyword])
             return EqualsValueClauseSyntax(equals_token, value)
         return EmptySyntax()
 
