@@ -142,8 +142,7 @@ class Parser:
         return self.expression()
 
     def return_statement(self):
-        return_keyword = self.token
-        self.eat(SyntaxKind.ReturnKeyword)
+        return_keyword = self.eat(SyntaxKind.ReturnKeyword)
         expression = self.expression()
         semicolon_token = EmptySyntax()
         if self.token.kind == SyntaxKind.SemicolonToken:

@@ -22,4 +22,4 @@ class LiteralExpressionSyntax(object):
         self.token = token
 
     def __str__(self):
-        return f"{self.token.text}"
+        return f"{self.token}"
