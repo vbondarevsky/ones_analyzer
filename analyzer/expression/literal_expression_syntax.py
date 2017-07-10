@@ -17,8 +17,6 @@ class LiteralExpressionSyntax(object):
             self.kind = SyntaxKind.TrueLiteralExpression
         elif token.kind == SyntaxKind.FalseKeyword:
             self.kind = SyntaxKind.FalseLiteralExpression
-        else:
-            raise Exception("")  # TODO: Сделать осмысленное исключение
         self.token = token
 
     def __str__(self):
