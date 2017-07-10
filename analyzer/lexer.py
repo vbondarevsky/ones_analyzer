@@ -198,9 +198,6 @@ class Lexer:
                 characters.append(self.character)
                 self.token = SyntaxToken(SyntaxKind.DateLiteralToken, ''.join(characters))
                 break
-            else:
-                self.token = SyntaxToken(SyntaxKind.BadToken, None)
-                break
         self.next_character()
 
     def read_comparison_operator(self):
