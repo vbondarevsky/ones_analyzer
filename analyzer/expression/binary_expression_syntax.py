@@ -6,4 +6,4 @@ class BinaryExpressionSyntax(object):
         self.right = right
 
     def __str__(self):
-        return f"{self.left}{self.operator_token.text}{self.right}"
+        return f"{self.left}{self.operator_token}{self.right}"

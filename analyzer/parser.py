@@ -133,13 +133,16 @@ class Parser:
     def statement(self):
         if self.token.kind == SyntaxKind.ReturnKeyword:
             return self.return_statement()
-        elif self.token.kind == SyntaxKind.IdentifierToken:
-            expression = self.assignment_statement()
+        elif self.token.kind in [SyntaxKind.IdentifierToken, SyntaxKind.MinusToken, SyntaxKind.PlusToken,
+                                 SyntaxKind.OpenParenToken, SyntaxKind.NumericLiteralToken,
+                                 SyntaxKind.StringLiteralToken]:
+            expression = self.expression()
             semicolon_token = EmptySyntax()
             if self.token.kind == SyntaxKind.SemicolonToken:
                 semicolon_token = self.eat(SyntaxKind.SemicolonToken)
             return ExpressionStatementSyntax(expression, semicolon_token)
-        return self.expression()
+        else:
+            return EmptySyntax()
 
     def return_statement(self):
         return_keyword = self.eat(SyntaxKind.ReturnKeyword)
