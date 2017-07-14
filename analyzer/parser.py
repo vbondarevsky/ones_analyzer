@@ -128,6 +128,8 @@ class Parser:
         statement = self.statement()
         if statement.kind != SyntaxKind.Empty:
             statements.append(statement)
+        while self.token.kind == SyntaxKind.SemicolonToken:
+            statements.append(self.statement())
         return statements
 
     def statement(self):
@@ -178,21 +180,27 @@ class Parser:
             close_token = self.token
             self.eat(SyntaxKind.CloseParenToken)
             return ParenthesizedExpressionSyntax(token, node, close_token)
+        elif token.kind == SyntaxKind.IdentifierToken:
+            return self.eat(SyntaxKind.IdentifierToken)
         else:
             return EmptySyntax()
 
     def term(self):
         node = self.factor()
-        while self.token.kind in [SyntaxKind.AsteriskToken, SyntaxKind.SlashToken]:
+        while self.token.kind in [SyntaxKind.AsteriskToken, SyntaxKind.SlashToken, SyntaxKind.PercentToken]:
             token = self.token
             if token.kind == SyntaxKind.SlashToken:
                 self.eat(SyntaxKind.SlashToken)
             elif token.kind == SyntaxKind.AsteriskToken:
                 self.eat(SyntaxKind.AsteriskToken)
+            elif token.kind == SyntaxKind.PercentToken:
+                self.eat(SyntaxKind.PercentToken)
             if token.kind == SyntaxKind.SlashToken:
                 node = BinaryExpressionSyntax(SyntaxKind.DivideExpression, node, token, self.term())
             elif token.kind == SyntaxKind.AsteriskToken:
                 node = BinaryExpressionSyntax(SyntaxKind.MultiplyExpression, node, token, self.term())
+            elif token.kind == SyntaxKind.PercentToken:
+                node = BinaryExpressionSyntax(SyntaxKind.ModuloExpression, node, token, self.term())
         return node
 
     def expression(self):

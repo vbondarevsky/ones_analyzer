@@ -3,6 +3,10 @@ from tests.utils import TestCaseParser
 
 
 class TestParserExpressionStatement(TestCaseParser):
+    def test_two_expression(self):
+        self.parse_source("A=3;B=4")
+        pass
+
     def test_unary_minus(self):
         self.parse_source("-2")
         self.assertNode(self.syntax_tree.statements, [SyntaxKind.ExpressionStatement])
