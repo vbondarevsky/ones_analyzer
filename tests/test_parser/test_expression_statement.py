@@ -5,7 +5,18 @@ from tests.utils import TestCaseParser
 class TestParserExpressionStatement(TestCaseParser):
     def test_two_expression(self):
         self.parse_source("A=3;B=4")
-        pass
+        self.assertNode(self.syntax_tree.statements, [SyntaxKind.ExpressionStatement, SyntaxKind.ExpressionStatement])
+        self.assertNode(self.syntax_tree.statements[0].expression, SyntaxKind.AssignmentExpression)
+        self.assertNode(self.syntax_tree.statements[0].expression.left, SyntaxKind.IdentifierToken)
+        self.assertNode(self.syntax_tree.statements[0].expression.operator_token, SyntaxKind.EqualsToken)
+        self.assertNode(self.syntax_tree.statements[0].expression.right, SyntaxKind.NumericLiteralExpression)
+        self.assertNode(self.syntax_tree.statements[0].semicolon_token, SyntaxKind.SemicolonToken)
+
+        self.assertNode(self.syntax_tree.statements[1].expression, SyntaxKind.AssignmentExpression)
+        self.assertNode(self.syntax_tree.statements[1].expression.left, SyntaxKind.IdentifierToken)
+        self.assertNode(self.syntax_tree.statements[1].expression.operator_token, SyntaxKind.EqualsToken)
+        self.assertNode(self.syntax_tree.statements[1].expression.right, SyntaxKind.NumericLiteralExpression)
+        self.assertNode(self.syntax_tree.statements[1].semicolon_token, SyntaxKind.Empty)
 
     def test_unary_minus(self):
         self.parse_source("-2")
