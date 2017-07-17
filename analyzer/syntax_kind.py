@@ -88,6 +88,7 @@ class SyntaxKind(Enum):
     AddExpression = 9001
     DivideExpression = 9002
     MultiplyExpression = 9003
+    ModuloExpression = 9006
 
     NumericLiteralExpression = 9004
     StringLiteralExpression = 9015
@@ -115,8 +116,6 @@ class SyntaxKind(Enum):
 
     EndFunctionStatement = 3
     EndProcedureStatement = 4
-
-
 
     ParameterList = 9012
     Parameter = 9013

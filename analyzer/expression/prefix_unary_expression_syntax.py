@@ -5,4 +5,4 @@ class PrefixUnaryExpressionSyntax(object):
         self.operand = operand
 
     def __str__(self):
-        return f"{self.operator_token.text}{self.operand}"
+        return f"{self.operator_token}{self.operand}"

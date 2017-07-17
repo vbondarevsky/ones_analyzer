@@ -128,6 +128,11 @@ class Parser:
         statement = self.statement()
         if statement.kind != SyntaxKind.Empty:
             statements.append(statement)
+        while self.token.kind == SyntaxKind.SemicolonToken:
+            self.eat(SyntaxKind.SemicolonToken)
+            statement = self.statement()
+            if statement.kind != SyntaxKind.Empty:
+                statements.append(statement)
         return statements
 
     def statement(self):
@@ -135,11 +140,15 @@ class Parser:
             return self.return_statement()
         elif self.token.kind == SyntaxKind.IdentifierToken:
             expression = self.assignment_statement()
-            semicolon_token = EmptySyntax()
-            if self.token.kind == SyntaxKind.SemicolonToken:
-                semicolon_token = self.eat(SyntaxKind.SemicolonToken)
+            semicolon_token = self.token if self.token.kind == SyntaxKind.SemicolonToken else EmptySyntax()
             return ExpressionStatementSyntax(expression, semicolon_token)
-        return self.expression()
+        elif self.token.kind in [SyntaxKind.NumericLiteralToken, SyntaxKind.OpenParenToken,
+                                 SyntaxKind.MinusToken, SyntaxKind.PlusToken]:
+            expression = self.expression()
+            semicolon_token = self.token if self.token.kind == SyntaxKind.SemicolonToken else EmptySyntax()
+            return ExpressionStatementSyntax(expression, semicolon_token)
+        else:
+            return EmptySyntax()
 
     def return_statement(self):
         return_keyword = self.eat(SyntaxKind.ReturnKeyword)
@@ -147,61 +156,53 @@ class Parser:
         semicolon_token = EmptySyntax()
         if self.token.kind == SyntaxKind.SemicolonToken:
             semicolon_token = self.token
-            self.eat(SyntaxKind.SemicolonToken)
         return ReturnStatementSyntax(return_keyword, expression, semicolon_token)
 
     def assignment_statement(self):
-        left = self.token
-        self.eat(SyntaxKind.IdentifierToken)
-        operator_token = self.token
-        self.eat(SyntaxKind.EqualsToken)
-        right = self.expression()
-        return AssignmentExpressionSyntax(left, operator_token, right)
-
-    def factor(self):
-        token = self.token
-        if token.kind == SyntaxKind.PlusToken:
-            self.eat(SyntaxKind.PlusToken)
-            return PrefixUnaryExpressionSyntax(SyntaxKind.UnaryPlusExpression, token, self.factor())
-        elif token.kind == SyntaxKind.MinusToken:
-            self.eat(SyntaxKind.MinusToken)
-            return PrefixUnaryExpressionSyntax(SyntaxKind.UnaryMinusExpression, token, self.factor())
-        elif token.kind == SyntaxKind.NumericLiteralToken:
-            self.eat(SyntaxKind.NumericLiteralToken)
-            return LiteralExpressionSyntax(token)
-        elif token.kind == SyntaxKind.OpenParenToken:
-            self.eat(SyntaxKind.OpenParenToken)
-            node = self.expression()
-            close_token = self.token
-            self.eat(SyntaxKind.CloseParenToken)
-            return ParenthesizedExpressionSyntax(token, node, close_token)
-        else:
-            return EmptySyntax()
-
-    def term(self):
-        node = self.factor()
-        while self.token.kind in [SyntaxKind.AsteriskToken, SyntaxKind.SlashToken]:
-            token = self.token
-            if token.kind == SyntaxKind.SlashToken:
-                self.eat(SyntaxKind.SlashToken)
-            elif token.kind == SyntaxKind.AsteriskToken:
-                self.eat(SyntaxKind.AsteriskToken)
-            if token.kind == SyntaxKind.SlashToken:
-                node = BinaryExpressionSyntax(SyntaxKind.DivideExpression, node, token, self.term())
-            elif token.kind == SyntaxKind.AsteriskToken:
-                node = BinaryExpressionSyntax(SyntaxKind.MultiplyExpression, node, token, self.term())
-        return node
+        return AssignmentExpressionSyntax(
+            self.eat(SyntaxKind.IdentifierToken),
+            self.eat(SyntaxKind.EqualsToken),
+            self.expression())
 
     def expression(self):
         node = self.term()
         while self.token.kind in [SyntaxKind.PlusToken, SyntaxKind.MinusToken]:
-            token = self.token
-            if token.kind == SyntaxKind.PlusToken:
-                self.eat(SyntaxKind.PlusToken)
-            elif token.kind == SyntaxKind.MinusToken:
-                self.eat(SyntaxKind.MinusToken)
-            if token.kind == SyntaxKind.PlusToken:
-                node = BinaryExpressionSyntax(SyntaxKind.AddExpression, node, token, self.term())
-            elif token.kind == SyntaxKind.MinusToken:
-                node = BinaryExpressionSyntax(SyntaxKind.SubtractExpression, node, token, self.term())
+            node = BinaryExpressionSyntax(
+                node,
+                self.eat([SyntaxKind.PlusToken, SyntaxKind.MinusToken]),
+                self.term())
         return node
+
+    def term(self):
+        node = self.unary()
+        while self.token.kind in [SyntaxKind.AsteriskToken, SyntaxKind.SlashToken, SyntaxKind.PercentToken]:
+            node = BinaryExpressionSyntax(
+                node,
+                self.eat([SyntaxKind.AsteriskToken, SyntaxKind.SlashToken, SyntaxKind.PercentToken]),
+                self.unary())
+        return node
+
+    def unary(self):
+        if self.token.kind == SyntaxKind.MinusToken:
+            return PrefixUnaryExpressionSyntax(
+                SyntaxKind.UnaryMinusExpression,
+                self.eat(SyntaxKind.MinusToken),
+                self.factor())
+        elif self.token.kind == SyntaxKind.PlusToken:
+            return PrefixUnaryExpressionSyntax(
+                SyntaxKind.UnaryPlusExpression,
+                self.eat(SyntaxKind.PlusToken),
+                self.factor())
+        else:
+            return self.factor()
+
+    def factor(self):
+        if self.token.kind == SyntaxKind.OpenParenToken:
+            return ParenthesizedExpressionSyntax(
+                self.eat(SyntaxKind.OpenParenToken),
+                self.expression(),
+                self.eat(SyntaxKind.CloseParenToken))
+        elif self.token.kind == SyntaxKind.NumericLiteralToken:
+            return LiteralExpressionSyntax(self.eat(SyntaxKind.NumericLiteralToken))
+        else:
+            return EmptySyntax()

@@ -78,7 +78,7 @@ class TestParserParameter(TestCaseParser):
         self.assertNode(self.syntax_tree.methods[0].begin.parameter_list.parameters[0].default.value,
                         SyntaxKind.NullLiteralExpression)
 
-    def test_default_value_bool(self):
+    def test_default_value_bool_true(self):
         code = \
             """Процедура МояПроцедура(П = Истина) Экспорт
             КонецПроцедуры"""
@@ -92,3 +92,18 @@ class TestParserParameter(TestCaseParser):
                         SyntaxKind.EqualsToken)
         self.assertNode(self.syntax_tree.methods[0].begin.parameter_list.parameters[0].default.value,
                         SyntaxKind.TrueLiteralExpression)
+
+    def test_default_value_bool_false(self):
+        code = \
+            """Процедура МояПроцедура(П = Ложь) Экспорт
+            КонецПроцедуры"""
+        self.parse_source(code)
+        self.assertNode(self.syntax_tree.methods[0].begin.parameter_list.parameters, [SyntaxKind.Parameter])
+        self.assertNode(self.syntax_tree.methods[0].begin.parameter_list.parameters[0].identifier,
+                        SyntaxKind.IdentifierToken)
+        self.assertNode(self.syntax_tree.methods[0].begin.parameter_list.parameters[0].default,
+                        SyntaxKind.EqualsValueClause)
+        self.assertNode(self.syntax_tree.methods[0].begin.parameter_list.parameters[0].default.equals_token,
+                        SyntaxKind.EqualsToken)
+        self.assertNode(self.syntax_tree.methods[0].begin.parameter_list.parameters[0].default.value,
+                        SyntaxKind.FalseLiteralExpression)

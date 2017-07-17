@@ -9,4 +9,4 @@ class ParenthesizedExpressionSyntax(object):
         self.close_paren_token = close_paren_token
 
     def __str__(self):
-        return f"{self.open_paren_token.text}{self.expression}{self.close_paren_token.text}"
+        return f"{self.open_paren_token}{self.expression}{self.close_paren_token}"
