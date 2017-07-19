@@ -105,6 +105,10 @@ class SyntaxKind(Enum):
     AssignmentExpression = 9300
     ExpressionStatement = 9400
 
+    MemberAccessExpression = 9401
+
+    IdentifierName = 9500
+
     VariableDeclaration = 9008
     Module = 9009
 

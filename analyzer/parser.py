@@ -3,7 +3,9 @@ from analyzer.expression.binary_expression_syntax import BinaryExpressionSyntax
 from analyzer.expression.empty_syntax import EmptySyntax
 from analyzer.expression.equals_value_clause_syntax import EqualsValueClauseSyntax
 from analyzer.expression.expression_statement_syntax import ExpressionStatementSyntax
+from analyzer.expression.identifier_name_syntax import IdentifierNameSyntax
 from analyzer.expression.literal_expression_syntax import LiteralExpressionSyntax
+from analyzer.expression.member_access_expression_syntax import MemberAccessExpressionSyntax
 from analyzer.expression.method_block_syntax import MethodBlockSyntax
 from analyzer.expression.method_statement_syntax import MethodStatementSyntax
 from analyzer.expression.module_syntax import ModuleSyntax
@@ -159,10 +161,14 @@ class Parser:
         return ReturnStatementSyntax(return_keyword, expression, semicolon_token)
 
     def assignment_statement(self):
-        return AssignmentExpressionSyntax(
-            self.eat(SyntaxKind.IdentifierToken),
-            self.eat(SyntaxKind.EqualsToken),
-            self.expression())
+        node = self.factor()
+        if self.token.kind == SyntaxKind.EqualsToken:
+            return AssignmentExpressionSyntax(
+                node,
+                self.eat(SyntaxKind.EqualsToken),
+                self.expression())
+        else:
+            return node
 
     def expression(self):
         node = self.term()
@@ -204,5 +210,20 @@ class Parser:
                 self.eat(SyntaxKind.CloseParenToken))
         elif self.token.kind == SyntaxKind.NumericLiteralToken:
             return LiteralExpressionSyntax(self.eat(SyntaxKind.NumericLiteralToken))
+        elif self.token.kind == SyntaxKind.IdentifierToken:
+            node = IdentifierNameSyntax(self.eat(SyntaxKind.IdentifierToken))
+            if self.token.kind == SyntaxKind.DotToken:
+                return self.member_access()
+            else:
+                return IdentifierNameSyntax(token)
         else:
             return EmptySyntax()
+
+    def member_access(self):
+        node = self.factor()
+        while self.token.kind == SyntaxKind.DotToken:
+            node = MemberAccessExpressionSyntax(
+                node,
+                self.eat(SyntaxKind.DotToken),
+                self.factor())
+        return node
